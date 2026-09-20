@@ -6761,7 +6761,8 @@
                 loading_lecture:'加载讲义内容...',recovering_lecture:'从云端恢复讲义内容...',
                 all_done:'已完成',release_refresh:'松开刷新',
                 note_empty:'笔记内容为空',folder_title_prompt:'子文件夹标题：',
-                grading_progress:'评分中... ({0}/{1}) 第{2}题',
+                grading_progress:'评分中... ({0}/{1}) 第{2}题',confirm_grade_all:'确定批改所有有手写作答的题目吗？已有评分将被替换。',
+                exercise_grading_invalid_response:'AI 批改结果格式无效，请重试。',
                 grade_done:'评分完成: {0} 道成功',grade_done_fail:'，{0} 道失败',
                 generating_pdf:'正在生成PDF ({0} 题)，渲染公式中...',
                 rendering_q:'渲染第 {0}/{1} 题...',exported_q:'已导出 {0} 道题',
@@ -6950,7 +6951,8 @@
                 loading_lecture:'Loading lecture...',recovering_lecture:'Recovering from cloud...',
                 all_done:'Done',release_refresh:'Release to refresh',
                 note_empty:'Note is empty',folder_title_prompt:'Folder title:',
-                grading_progress:'Grading... ({0}/{1}) Q{2}',
+                grading_progress:'Grading... ({0}/{1}) Q{2}',confirm_grade_all:'Grade all questions with handwritten answers? Existing grades will be replaced.',
+                exercise_grading_invalid_response:'The AI grading response has an invalid format. Please try again.',
                 grade_done:'Grading done: {0} passed',grade_done_fail:', {0} failed',
                 generating_pdf:'Generating PDF ({0} questions)...',
                 rendering_q:'Rendering {0}/{1}...',exported_q:'Exported {0} questions',
@@ -7139,7 +7141,8 @@
                 loading_lecture:'Chargement du cours...',recovering_lecture:'Récupération depuis le cloud...',
                 all_done:'Terminé',release_refresh:'Relâcher pour rafraîchir',
                 note_empty:'Note vide',folder_title_prompt:'Titre du dossier :',
-                grading_progress:'Notation... ({0}/{1}) Q{2}',
+                grading_progress:'Notation... ({0}/{1}) Q{2}',confirm_grade_all:'Noter toutes les questions avec une réponse manuscrite ? Les notes existantes seront remplacées.',
+                exercise_grading_invalid_response:'La réponse de notation de l’IA a un format invalide. Veuillez réessayer.',
                 grade_done:'Notation terminée : {0} réussies',grade_done_fail:', {0} échouées',
                 generating_pdf:'Génération PDF ({0} questions)...',
                 rendering_q:'Rendu {0}/{1}...',exported_q:'{0} questions exportées',
@@ -7335,7 +7338,7 @@
             nb_stage_tonight:'当晚', nb_stage_2_days:'2 天后', nb_stage_4_days:'4 天后', nb_stage_7_days:'7 天后', nb_stage_21_days:'21 天后', hours_count:'{0} 小时', days_hours:'{0} 天 {1} 小时', review_empty_hint:'在笔记本内点击“加入复习”<br>AI 将生成间隔复习 Quiz', consolidation_practice:'巩固加练', graded_badge:'{0} 已评分 · {1}/10', completed_at:'完成于 {0}', generation_failed_retry:'生成失败 · 点击重试', overdue:'已过期', review_due_at:'应于 {0} 复习', expires_in:'剩余 {0} 失效', planned_at:'计划 {0}', pending_practice:'待加练 ×{0}', quiz_generating:'Quiz 生成中…', invalid:'已失效', invalid_restart_hint:'间隔超过一个月未复习，点击重新开始', review_complete:'复习完成', retry_generation:'重试生成', review_in_progress:'复习中',
             confirm_delete_review_quiz:'确定删除该页的复习 Quiz？', quiz_deleted:'Quiz 已删除', regenerating_quiz:'正在重新生成 Quiz…', confirm_restart_completed_review:'该页已完成全部复习。重新开始复习流程？', confirm_restart_invalid_review:'复习已失效（间隔超过一个月）。从头开始复习流程？', quiz_generating_wait:'Quiz 生成中，请稍候…', added_to_review:'已加入复习', review_restarted:'复习流程已重新开始，正在生成当晚 Quiz…', practice:'加练', quiz_generated:'复习 Quiz 已生成（{0}）', quiz_generation_failed:'Quiz 生成失败：{0}',
             prompt_review_quiz_system:'你是一位经验丰富的数学学习教练。根据学生的手写数学笔记设计间隔重复 Quiz。笔记只是重点摘要，请基于所属知识体系拓展重要定理、逆命题、推论、边界条件、易混概念与常见变式。题目应有深度，避免纯定义默写。直接从第一题开始，不输出寒暄、答案或提示。使用 Markdown，数学公式使用 LaTeX。', prompt_review_quiz_extra:'学生上一阶段复习拖延，需要额外巩固。基于本页笔记生成 3–4 道题：至少一道同知识点拓展题，至少一道多步计算或证明题；以巩固基础为主但需有思考量。只输出题目，不要答案。', prompt_review_quiz_tonight:'这是学生今天的数学笔记。生成“当晚复习”Quiz（4–5 题）：1–2 道核心概念理解题，1–2 道直接应用的计算或证明题，1 道相关定理、逆命题、特殊情形或跨知识联系的拓展题。只输出题目，不要答案。', prompt_review_quiz_advanced:'这是学生 {0} 天前学习的数学笔记，本次是第 {1} 次间隔复习（{2}）。生成进阶 Quiz（4–5 题）：概念辨析 1 题、变式 1–2 题、综合应用 1 题、拓展挑战 1 题。必须比上次更深入并避免重复题型。只输出题目，不要答案。', prompt_previous_quiz:'\n\n上次 Quiz 如下。严格避免重复，必须更深入：\n{0}', prompt_previous_quiz_result:'\n\n上次 Quiz 的 AI 评分如下。下一次 Quiz 必须针对薄弱点与错题增加变式和递进训练，减少已掌握内容的机械重复，且不得泄露答案。\n总分：{0}/10', prompt_ai_feedback:'\nAI 点评：\n{0}', prompt_recognized_note:'\n\n笔记内容（识别文本）：\n{0}',
-            write_answer_first:'请先在画布上写出你的答案', grading:'评分中…', grading_in_progress:'正在评分…', ai_grading_empty:'AI 评分返回为空', per_question_review_heading:'**逐题核对：**\n', solutions_missing:'AI 未返回正确答案与完整推导', solutions_section:'**✦ 正确答案与完整推导：**\n{0}', grading_failed:'评分失败：{0}', grading_complete_practice:'评分完成，正在生成巩固加练 Quiz…', grading_complete_next:'评分完成，正在生成 {0} 的进阶 Quiz…', all_reviews_complete:'全部复习完成！',
+            write_answer_first:'请先在画布上写出你的答案', grading:'评分中…', grading_in_progress:'正在评分…', ai_grading_empty:'AI 评分返回为空', review_grading_invalid_response:'AI 复习评分结果格式无效，请重试。', per_question_review_heading:'**逐题核对：**\n', solutions_missing:'AI 未返回正确答案与完整推导', solutions_section:'**✦ 正确答案与完整推导：**\n{0}', grading_failed:'评分失败：{0}', grading_complete_practice:'评分完成，正在生成巩固加练 Quiz…', grading_complete_next:'评分完成，正在生成 {0} 的进阶 Quiz…', all_reviews_complete:'全部复习完成！',
             prompt_review_grade_system:'你是严格、专业的数学阅卷与解答助手。先独立求解 Quiz 全部题目，再按原顺序核对学生手写作答。综合满分 10 分：正确完整性 6 分、表达与推导严谨性 2 分、思路清晰度 2 分。必须覆盖每题；未作答、不完整或字迹不清也要给出正确答案和完整解法。per_question 只具体核对学生答案；solutions 按题号给出明确结论与不省略关键步骤的完整推导。不得编造缺失条件，不输出泛泛评价。严格只输出可由 JSON.parse 解析的纯 JSON：{"score":0到10的数字,"per_question":[{"q":"题号或简述","correct":布尔值,"comment":"具体核对"}],"solutions":"逐题正确答案与完整推导"}。公式使用 LaTeX，字符串按 JSON 规则转义。', prompt_review_grade_user:'以下是 Quiz 题目：\n\n{0}\n\n请按题目顺序核对图片中的手写作答。每道题都必须给出明确的正确答案和完整数学推导，不能只指出错误。'
         });
         Object.assign(I18N.en, {
@@ -7348,7 +7351,7 @@
             nb_stage_tonight:'Tonight', nb_stage_2_days:'In 2 days', nb_stage_4_days:'In 4 days', nb_stage_7_days:'In 7 days', nb_stage_21_days:'In 21 days', hours_count:'{0} hours', days_hours:'{0} days {1} hours', review_empty_hint:'Click “Add to review” inside a notebook.<br>AI will generate spaced-repetition quizzes.', consolidation_practice:'Consolidation practice', graded_badge:'{0} graded · {1}/10', completed_at:'Completed {0}', generation_failed_retry:'Generation failed · Click to retry', overdue:'Overdue', review_due_at:'Review was due {0}', expires_in:'Expires in {0}', planned_at:'Planned for {0}', pending_practice:'Extra practice ×{0}', quiz_generating:'Generating quiz…', invalid:'Expired', invalid_restart_hint:'More than a month passed without review; click to restart', review_complete:'Review complete', retry_generation:'Retry generation', review_in_progress:'Review in progress',
             confirm_delete_review_quiz:'Delete the review quiz for this page?', quiz_deleted:'Quiz deleted', regenerating_quiz:'Regenerating quiz…', confirm_restart_completed_review:'All reviews for this page are complete. Restart the review cycle?', confirm_restart_invalid_review:'This review expired after more than a month. Restart from the beginning?', quiz_generating_wait:'The quiz is still being generated…', added_to_review:'Added to review', review_restarted:'Review cycle restarted; generating tonight’s quiz…', practice:'Practice', quiz_generated:'Review quiz generated ({0})', quiz_generation_failed:'Quiz generation failed: {0}',
             prompt_review_quiz_system:'You are an experienced mathematics learning coach. Design a spaced-repetition quiz from the student’s handwritten mathematics notes. Notes are only a summary: draw on the surrounding body of knowledge and extend to important theorems, converses, corollaries, boundary cases, confusable ideas, and common variations. Questions must require thought rather than rote definitions. Start directly with question 1; include no greeting, answer, or hint. Use Markdown and LaTeX for mathematics.', prompt_review_quiz_extra:'The student delayed the previous review and needs extra consolidation. Create 3–4 questions from this page: at least one extension within the same topic and at least one multi-step calculation or proof. Reinforce fundamentals without trivial questions. Output questions only, with no answers.', prompt_review_quiz_tonight:'These are the student’s mathematics notes from today. Create a 4–5 question “Tonight” quiz: 1–2 conceptual-understanding questions, 1–2 direct calculation or proof applications, and one extension involving a related theorem, converse, special case, or connection. Output questions only, with no answers.', prompt_review_quiz_advanced:'The student studied these mathematics notes {0} days ago. This is spaced review {1} ({2}). Create an advanced 4–5 question quiz: one conceptual distinction, 1–2 variations, one integrated application, and one extension challenge. Go deeper than the previous review and avoid repeating question types. Output questions only, with no answers.', prompt_previous_quiz:'\n\nPrevious quiz (avoid repetition and go deeper):\n{0}', prompt_previous_quiz_result:'\n\nUse the previous AI grade below to design the next quiz. Target weak areas and mistakes with progressive variations, reduce mechanical repetition of mastered material, and reveal no answers.\nOverall score: {0}/10', prompt_ai_feedback:'\nAI feedback:\n{0}', prompt_recognized_note:'\n\nRecognized note text:\n{0}',
-            write_answer_first:'Write your answer on the canvas first', grading:'Grading…', grading_in_progress:'Grading in progress…', ai_grading_empty:'The AI returned no grading result', per_question_review_heading:'**Question-by-question review:**\n', solutions_missing:'The AI did not return correct answers and full derivations', solutions_section:'**✦ Correct answers and full derivations:**\n{0}', grading_failed:'Grading failed: {0}', grading_complete_practice:'Grading complete; generating consolidation practice…', grading_complete_next:'Grading complete; generating the advanced quiz for {0}…', all_reviews_complete:'All reviews complete!',
+            write_answer_first:'Write your answer on the canvas first', grading:'Grading…', grading_in_progress:'Grading in progress…', ai_grading_empty:'The AI returned no grading result', review_grading_invalid_response:'The AI review grading response has an invalid format. Please try again.', per_question_review_heading:'**Question-by-question review:**\n', solutions_missing:'The AI did not return correct answers and full derivations', solutions_section:'**✦ Correct answers and full derivations:**\n{0}', grading_failed:'Grading failed: {0}', grading_complete_practice:'Grading complete; generating consolidation practice…', grading_complete_next:'Grading complete; generating the advanced quiz for {0}…', all_reviews_complete:'All reviews complete!',
             prompt_review_grade_system:'You are a strict, professional mathematics grader and solver. First solve every quiz question independently, then check the handwritten work in the original order. Give an overall score out of 10: correctness and completeness 6, mathematical rigor 2, clarity 2. Cover every question; even unanswered, incomplete, or illegible work requires the correct answer and a full solution. per_question must only assess the student’s work specifically. solutions must give an explicit answer or conclusion and a complete derivation for every question without omitting key steps. Do not invent missing conditions or add generic encouragement. Return only valid JSON.parse-compatible JSON: {"score":number from 0 to 10,"per_question":[{"q":"question number or summary","correct":boolean,"comment":"specific check"}],"solutions":"correct answer and full derivation for every question"}. Use LaTeX and valid JSON escaping.', prompt_review_grade_user:'Quiz questions:\n\n{0}\n\nCheck the handwritten work in the image in question order. For every question, provide an explicit correct answer and complete mathematical derivation; do not merely identify errors.'
         });
         Object.assign(I18N.fr, {
@@ -7361,7 +7364,7 @@
             nb_stage_tonight:'Ce soir', nb_stage_2_days:'Dans 2 jours', nb_stage_4_days:'Dans 4 jours', nb_stage_7_days:'Dans 7 jours', nb_stage_21_days:'Dans 21 jours', hours_count:'{0} heures', days_hours:'{0} jours {1} heures', review_empty_hint:'Touchez « Ajouter aux révisions » dans un carnet.<br>L’IA générera des quiz de répétition espacée.', consolidation_practice:'Exercice de consolidation', graded_badge:'{0} noté · {1}/10', completed_at:'Terminé le {0}', generation_failed_retry:'Échec de la génération · Touchez pour réessayer', overdue:'En retard', review_due_at:'Révision prévue le {0}', expires_in:'Expire dans {0}', planned_at:'Prévu le {0}', pending_practice:'Exercices supplémentaires ×{0}', quiz_generating:'Génération du quiz…', invalid:'Expiré', invalid_restart_hint:'Plus d’un mois sans révision ; touchez pour recommencer', review_complete:'Révision terminée', retry_generation:'Relancer la génération', review_in_progress:'Révision en cours',
             confirm_delete_review_quiz:'Supprimer le quiz de révision de cette page ?', quiz_deleted:'Quiz supprimé', regenerating_quiz:'Régénération du quiz…', confirm_restart_completed_review:'Toutes les révisions de cette page sont terminées. Recommencer le cycle ?', confirm_restart_invalid_review:'Cette révision a expiré après plus d’un mois. Recommencer depuis le début ?', quiz_generating_wait:'Le quiz est encore en cours de génération…', added_to_review:'Ajouté aux révisions', review_restarted:'Cycle de révision relancé ; génération du quiz de ce soir…', practice:'Entraînement', quiz_generated:'Quiz de révision généré ({0})', quiz_generation_failed:'Échec de génération du quiz : {0}',
             prompt_review_quiz_system:'Tu es un coach expérimenté en apprentissage des mathématiques. Conçois un quiz de répétition espacée à partir des notes manuscrites de l’élève. Les notes ne sont qu’un résumé : mobilise le corpus associé et étends les questions aux théorèmes importants, réciproques, corollaires, cas limites, notions proches et variantes courantes. Les questions doivent demander de la réflexion, pas une simple récitation. Commence directement par la première question, sans salutation, réponse ni indice. Utilise Markdown et LaTeX.', prompt_review_quiz_extra:'L’élève a retardé la révision précédente et a besoin d’une consolidation. Crée 3–4 questions à partir de cette page : au moins une extension du même thème et au moins un calcul ou une preuve en plusieurs étapes. Consolide les bases sans question triviale. Renvoie uniquement les questions, sans réponses.', prompt_review_quiz_tonight:'Voici les notes de mathématiques prises aujourd’hui. Crée un quiz « Ce soir » de 4–5 questions : 1–2 questions de compréhension conceptuelle, 1–2 applications directes de calcul ou de preuve, et une extension liée à un théorème, une réciproque, un cas particulier ou une connexion. Renvoie uniquement les questions, sans réponses.', prompt_review_quiz_advanced:'L’élève a étudié ces notes il y a {0} jours. Il s’agit de la révision espacée {1} ({2}). Crée un quiz avancé de 4–5 questions : une distinction conceptuelle, 1–2 variantes, une application intégrée et un défi. Va plus loin que la révision précédente sans répéter les types de questions. Renvoie uniquement les questions, sans réponses.', prompt_previous_quiz:'\n\nQuiz précédent (évite toute répétition et va plus loin) :\n{0}', prompt_previous_quiz_result:'\n\nUtilise la notation IA précédente pour concevoir le prochain quiz. Cible les lacunes et erreurs avec des variantes progressives, réduis la répétition mécanique des acquis et ne révèle aucune réponse.\nNote globale : {0}/10', prompt_ai_feedback:'\nCommentaire IA :\n{0}', prompt_recognized_note:'\n\nTexte reconnu des notes :\n{0}',
-            write_answer_first:'Écrivez d’abord votre réponse sur la zone de dessin', grading:'Notation…', grading_in_progress:'Notation en cours…', ai_grading_empty:'L’IA n’a renvoyé aucune notation', per_question_review_heading:'**Vérification question par question :**\n', solutions_missing:'L’IA n’a pas renvoyé les bonnes réponses et les démonstrations complètes', solutions_section:'**✦ Bonnes réponses et démonstrations complètes :**\n{0}', grading_failed:'Échec de la notation : {0}', grading_complete_practice:'Notation terminée ; génération d’un exercice de consolidation…', grading_complete_next:'Notation terminée ; génération du quiz avancé pour {0}…', all_reviews_complete:'Toutes les révisions sont terminées !',
+            write_answer_first:'Écrivez d’abord votre réponse sur la zone de dessin', grading:'Notation…', grading_in_progress:'Notation en cours…', ai_grading_empty:'L’IA n’a renvoyé aucune notation', review_grading_invalid_response:'La réponse de notation de révision de l’IA a un format invalide. Veuillez réessayer.', per_question_review_heading:'**Vérification question par question :**\n', solutions_missing:'L’IA n’a pas renvoyé les bonnes réponses et les démonstrations complètes', solutions_section:'**✦ Bonnes réponses et démonstrations complètes :**\n{0}', grading_failed:'Échec de la notation : {0}', grading_complete_practice:'Notation terminée ; génération d’un exercice de consolidation…', grading_complete_next:'Notation terminée ; génération du quiz avancé pour {0}…', all_reviews_complete:'Toutes les révisions sont terminées !',
             prompt_review_grade_system:'Tu es un correcteur et solveur de mathématiques strict et professionnel. Résous d’abord chaque question du quiz, puis vérifie la copie manuscrite dans l’ordre. Note globale sur 10 : exactitude et complétude 6, rigueur 2, clarté 2. Couvre chaque question ; même une réponse absente, incomplète ou illisible exige la bonne réponse et une solution complète. per_question évalue uniquement et précisément le travail de l’élève. solutions donne, pour chaque question, une réponse ou conclusion explicite et une démonstration complète sans omettre les étapes clés. N’invente aucune condition et n’ajoute aucun encouragement générique. Renvoie uniquement un JSON valide pour JSON.parse : {"score":nombre de 0 à 10,"per_question":[{"q":"numéro ou résumé","correct":booléen,"comment":"vérification précise"}],"solutions":"bonne réponse et démonstration complète pour chaque question"}. Utilise LaTeX et un échappement JSON valide.', prompt_review_grade_user:'Questions du quiz :\n\n{0}\n\nVérifie la copie manuscrite de l’image dans l’ordre. Pour chaque question, donne une bonne réponse explicite et une démonstration mathématique complète ; ne te contente pas de signaler les erreurs.'
         });
         let currentLang = 'en';
@@ -18797,7 +18800,7 @@
         //   避免公式里的 *、-、换行等被当作 Markdown 语法改写。
         // - 回填公式时做 HTML 转义：公式里的 <、>、& 否则会被浏览器当成标签或实体（如 $a<b$），导致无法渲染。
         // - 公式之外残留的箭头命令（模型常把 → 写成 \rightarrow）替换成对应字符，否则会原样显示。
-        function renderChatMarkdownLatex(text, escapeText = false) {
+        function renderChatMarkdownLatex(text) {
             if (!text) return '';
             const escapeLatexHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const arrowMap = {
@@ -18832,7 +18835,7 @@
 
             // 富文本展示不受信任的 AI 回复时，先转义公式之外的正文；
             // Markdown 标签仍由下面的转换生成，公式则已被占位符保护。
-            if (escapeText) content = escapeHtml(content);
+            content = escapeHtml(content);
 
             content = content.replace(/\\(rightarrow|longrightarrow|to|Rightarrow|Longrightarrow|implies|leftarrow|longleftarrow|gets|Leftarrow|leftrightarrow|Leftrightarrow|iff)\b/g, (match, name) => arrowMap[name]);
 
@@ -18848,11 +18851,13 @@
                 .replace(/\n/g, '<br>');
 
             html = html.replace(/%%LATEXBLOCK(\d+)%%/g, (match, idx) => {
+                if (latexBlocks[parseInt(idx)] === undefined) return match;
                 const latex = escapeLatexHtml(latexBlocks[parseInt(idx)]);
                 return `</p><div class="latex-display">$$${latex}$$</div><p>`;
             });
 
             html = html.replace(/%%LATEXINLINE(\d+)%%/g, (match, idx) => {
+                if (latexInlines[parseInt(idx)] === undefined) return match;
                 const latex = escapeLatexHtml(latexInlines[parseInt(idx)]);
                 return `$${latex}$`;
             });
@@ -19268,6 +19273,10 @@
                     pdfAttachment = { bytes: slice.bytes, base64: slice.base64, name: `${currentDoc.title}_p${currentPage}.pdf` };
                 } catch (e) {
                     console.error('切出当前页PDF失败:', e);
+                    if (appData.settings?.codexEnabled) {
+                        showToast(i18n('toast_failed') + (e?.message || String(e)));
+                        return;
+                    }
                 }
             }
 
@@ -20381,7 +20390,8 @@ ${i18n('prompt_lecture_gen')}`;
                     const slice = await slicePdfPages(fullBytes, chapter.startPage, chapter.endPage);
                     pdfAttachment = { bytes: slice.bytes, base64: slice.base64, name: `${book.title}_${chapter.title}.pdf` };
                 } catch (e) {
-                    console.error('切出章节 PDF 失败，改为不带附件生成:', e);
+                    console.error('切出章节 PDF 失败:', e);
+                    if (appData.settings?.codexEnabled) throw e;
                 }
 
                 const result = await callAI(systemPrompt, [{ role: 'user', content: userMessage }], {
@@ -20571,49 +20581,9 @@ ${i18n('prompt_lecture_gen')}`;
                 return;
             }
             
-            // 渲染Markdown内容，保护LaTeX公式
-            let content = contentText;
-            
-            // 保护LaTeX公式，避免被Markdown处理破坏
-            const latexBlocks = [];
-            const latexInlines = [];
-            
-            // 保护 $$ ... $$ 块级公式
-            content = content.replace(/\$\$([\s\S]*?)\$\$/g, (match, p1) => {
-                latexBlocks.push(p1.trim());
-                return `%%LATEXBLOCK${latexBlocks.length - 1}%%`;
-            });
-            
-            // 保护 $ ... $ 行内公式 (不跨行)
-            content = content.replace(/\$([^\$\n]+?)\$/g, (match, p1) => {
-                latexInlines.push(p1.trim());
-                return `%%LATEXINLINE${latexInlines.length - 1}%%`;
-            });
-            
-            // 处理Markdown
-            let html = content
-                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/^- (.*$)/gm, '<li>$1</li>')
-                .replace(/^(\d+)\. (.*$)/gm, '<li>$2</li>')
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>');
-            
-            // 恢复LaTeX公式
-            html = html.replace(/%%LATEXBLOCK(\d+)%%/g, (match, idx) => {
-                const latex = latexBlocks[parseInt(idx)];
-                return `</p><div class="latex-display">$$${latex}$$</div><p>`;
-            });
-            
-            html = html.replace(/%%LATEXINLINE(\d+)%%/g, (match, idx) => {
-                const latex = latexInlines[parseInt(idx)];
-                return `$${latex}$`;
-            });
-            
-            container.innerHTML = '<div class="lecture-body"><p>' + html + '</p></div>';
+            // Model/document text is untrusted. Use the same escaping renderer
+            // as Q&A and grading, including LaTeX HTML escaping.
+            container.innerHTML = '<div class="lecture-body">' + renderChatMarkdownLatex(contentText) + '</div>';
             
             // 添加绘制canvas
             const lectureBody = container.querySelector('.lecture-body');
@@ -20655,6 +20625,7 @@ ${i18n('prompt_lecture_gen')}`;
                             {left: '\\(', right: '\\)', display: false}
                         ],
                         throwOnError: false,
+                        trust: false,
                         strict: false
                     });
                 } catch (e) {
@@ -27026,7 +26997,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 return;
             }
 
-            if (!confirm(i18n('confirm_delete'))) return;
+            if (!confirm(i18n('confirm_grade_all'))) return;
 
             // 收集有书写内容的题目：完整页槽用于保存，非空页只用于 AI 评分。
             const toGrade = [];
@@ -27073,7 +27044,9 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                     if (!gradingGuard()) continue;
                     if (!result) { failed++; continue; }
 
-                    const grading = parseExerciseGradingResponse(result);
+                    const grading = parseExerciseGradingResponse(result, {
+                        strict: !!(appData.settings && appData.settings.codexEnabled)
+                    });
                     const score = Math.min(10, Math.max(0, Math.round(grading.score || 0)));
                     const comment = i18n('grade_comment', grading.solution || '-', grading.errors || '-', grading.similar_problem || '-');
 
@@ -28165,8 +28138,9 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
         }
 
         // 习题批改：解析 <score>/<solution>/<errors>/<similar> 标签格式的 AI 返回。
-        // 标签缺失或输出被截断时保留已有部分；退化为 JSON 或纯文本时也尽量提取分数。
-        function parseExerciseGradingResponse(text) {
+        // Codex 使用严格模式：四部分和 0–10 整数分必须完整有效，否则抛错且不提交评分。
+        // 关闭 Codex 时保留旧 API 的宽松解析，避免改变原有提供商的兼容性。
+        function parseExerciseGradingResponse(text, { strict = false } = {}) {
             const raw = String(text || '').replace(/```[a-zA-Z]*\s*/g, '').replace(/```/g, '').trim();
             const tagNames = '(?:score|solution|errors|similar)';
             const pick = (tag) => {
@@ -28174,6 +28148,61 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 const m = raw.match(re);
                 return m ? m[1].trim() : '';
             };
+            const invalidStrictResponse = () => {
+                const error = new Error(i18n('exercise_grading_invalid_response'));
+                error.code = 'EXERCISE_GRADING_FORMAT_INVALID';
+                throw error;
+            };
+            const validateStrictResponse = (candidate) => {
+                const scoreText = String(candidate.score == null ? '' : candidate.score).trim();
+                if (!/^(?:[0-9]|10)$/.test(scoreText)) invalidStrictResponse();
+                const solution = typeof candidate.solution === 'string' ? candidate.solution.trim() : '';
+                const errors = typeof candidate.errors === 'string' ? candidate.errors.trim() : '';
+                const similarProblem = typeof candidate.similar_problem === 'string'
+                    ? candidate.similar_problem.trim()
+                    : '';
+                if (!solution || !errors || !similarProblem) invalidStrictResponse();
+                return {
+                    score: Number(scoreText),
+                    solution,
+                    errors,
+                    similar_problem: similarProblem
+                };
+            };
+
+            if (strict) {
+                const completeTags = raw.match(/^<score>([\s\S]*?)<\/score>\s*<solution>([\s\S]*?)<\/solution>\s*<errors>([\s\S]*?)<\/errors>\s*<similar>([\s\S]*?)<\/similar>$/i);
+                if (completeTags) {
+                    return validateStrictResponse({
+                        score: completeTags[1],
+                        solution: completeTags[2],
+                        errors: completeTags[3],
+                        similar_problem: completeTags[4]
+                    });
+                }
+
+                // 完整 JSON 仍可作为结构化兼容输入，但不允许缺字段或默认分。
+                try {
+                    const obj = JSON.parse(raw);
+                    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) invalidStrictResponse();
+                    const hasOwn = (key) => Object.prototype.hasOwnProperty.call(obj, key);
+                    const errorsKey = hasOwn('errors') ? 'errors' : (hasOwn('mistakes') ? 'mistakes' : '');
+                    const similarKey = hasOwn('similar_problem') ? 'similar_problem' : (hasOwn('similar') ? 'similar' : '');
+                    if (!hasOwn('score') || !hasOwn('solution') || !errorsKey || !similarKey) {
+                        invalidStrictResponse();
+                    }
+                    return validateStrictResponse({
+                        score: obj.score,
+                        solution: obj.solution,
+                        errors: obj[errorsKey],
+                        similar_problem: obj[similarKey]
+                    });
+                } catch (error) {
+                    if (error && error.code === 'EXERCISE_GRADING_FORMAT_INVALID') throw error;
+                }
+                invalidStrictResponse();
+            }
+
             const scoreOutOfTen = raw.match(/(\d+(?:\.\d+)?)\s*[\/／]\s*10/);
             if (new RegExp('<' + tagNames + '>', 'i').test(raw)) {
                 const scoreMatch = pick('score').match(/\d+(?:\.\d+)?/);
@@ -30804,7 +30833,9 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 if (!isCurrentCompletion()) return;
                 if (!result) { showToast(i18n('toast_ai_return_parse_fail')); return; }
 
-                const grading = parseExerciseGradingResponse(result);
+                const grading = parseExerciseGradingResponse(result, {
+                    strict: !!(appData.settings && appData.settings.codexEnabled)
+                });
                 const score = Math.min(10, Math.max(0, Math.round(grading.score || 0)));
                 const comment = i18n('grade_comment', grading.solution || '-', grading.errors || '-', grading.similar_problem || '-');
 
@@ -31185,7 +31216,9 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 const result = await callAI(systemPrompt, msgContent, { maxTokens: 8192, temperature: 0.3 });
                 if (!result) { showToast(i18n('toast_ai_return_parse_fail')); return; }
 
-                const grading = parseExerciseGradingResponse(result);
+                const grading = parseExerciseGradingResponse(result, {
+                    strict: !!(appData.settings && appData.settings.codexEnabled)
+                });
                 const score = Math.min(10, Math.max(0, Math.round(grading.score || 0)));
                 const comment = i18n('grade_comment', grading.solution || '-', grading.errors || '-', grading.similar_problem || '-');
 
@@ -34863,6 +34896,66 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
             nbOpenNotebook(nb.id, r.pageId);
         }
 
+        function parseNotebookReviewGradingResponse(text, { strict = false } = {}) {
+            const raw = String(text || '');
+            if (!strict) {
+                try {
+                    return robustParseJSONObject(raw);
+                } catch (error) {
+                    const scoreMatch = raw.match(/(\d+)\s*[\/／]\s*10/);
+                    return {
+                        score: scoreMatch ? parseInt(scoreMatch[1]) : 5,
+                        per_question: [],
+                        solutions: raw.replace(/```json|```/g, '').trim().substring(0, 3500)
+                    };
+                }
+            }
+
+            const invalidStrictResponse = () => {
+                const error = new Error(i18n('review_grading_invalid_response'));
+                error.code = 'NOTEBOOK_REVIEW_GRADING_FORMAT_INVALID';
+                throw error;
+            };
+            const cleaned = raw
+                .replace(/^```(?:json)?\s*/i, '')
+                .replace(/\s*```$/i, '')
+                .trim();
+            let grading;
+            try {
+                grading = JSON.parse(cleaned);
+            } catch (error) {
+                invalidStrictResponse();
+            }
+
+            const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+            if (!grading || typeof grading !== 'object' || Array.isArray(grading) ||
+                !hasOwn(grading, 'score') || !hasOwn(grading, 'per_question') || !hasOwn(grading, 'solutions') ||
+                typeof grading.score !== 'number' || !Number.isFinite(grading.score) ||
+                grading.score < 0 || grading.score > 10 ||
+                !Array.isArray(grading.per_question) || grading.per_question.length === 0 ||
+                typeof grading.solutions !== 'string' || !grading.solutions.trim()) {
+                invalidStrictResponse();
+            }
+            const perQuestionValid = grading.per_question.every(item =>
+                item && typeof item === 'object' && !Array.isArray(item) &&
+                hasOwn(item, 'q') && hasOwn(item, 'correct') && hasOwn(item, 'comment') &&
+                typeof item.q === 'string' && !!item.q.trim() &&
+                typeof item.correct === 'boolean' &&
+                typeof item.comment === 'string' && !!item.comment.trim()
+            );
+            if (!perQuestionValid) invalidStrictResponse();
+
+            return {
+                score: grading.score,
+                per_question: grading.per_question.map(item => ({
+                    q: item.q.trim(),
+                    correct: item.correct,
+                    comment: item.comment.trim()
+                })),
+                solutions: grading.solutions.trim()
+            };
+        }
+
         // 完成 Quiz：截取画布 → 发给 AI 评分 → 显示结果 → 推进复习流程
         async function nbCompleteQuizFs() {
             if (!qzCurrentReviewId) return;
@@ -34898,15 +34991,9 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 const result = await callAI(systemPrompt, msgContent, { maxTokens: 4096, temperature: 0.3 });
                 if (!result) { showToast(i18n('ai_grading_empty')); if (btn) { btn.disabled = false; btn.textContent = i18n('done'); } return; }
 
-                let grading;
-                try { grading = robustParseJSONObject(result); } catch (e) {
-                    const scoreMatch = result.match(/(\d+)\s*[\/／]\s*10/);
-                    grading = {
-                        score: scoreMatch ? parseInt(scoreMatch[1]) : 5,
-                        per_question: [],
-                        solutions: result.replace(/```json|```/g, '').trim().substring(0, 3500)
-                    };
-                }
+                const grading = parseNotebookReviewGradingResponse(result, {
+                    strict: !!(appData.settings && appData.settings.codexEnabled)
+                });
 
                 const score = Math.min(10, Math.max(0, Math.round(grading.score || 0)));
                 let comment = '';

@@ -1,12 +1,12 @@
 # Math Reader Codex (experimental)
 
-这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。PWA 使用本仓库自己的 GitHub Pages 部署，正式 APK 签名仍未配置。请在本仓库提交 Issue 和后续修改。
+这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。PWA 使用本仓库自己的 GitHub Pages 部署，APK 使用独立包名和独立长期签名。请在本仓库提交 Issue 和后续修改。
 
 **网页版：** https://none0enon.github.io/math-reader-boox-codex/ 。首次打开是独立的空数据空间，不会自动导入稳定版资料；请自行备份后按需导入。Codex AI 需要连接你自己的私有网关，网页中没有内置账号、令牌或公开推理服务。
 
 This is an independent experimental repository for the personal ChatGPT-authenticated Codex gateway. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
 
-**安装提醒：** 目前继承的 Android 包名仍为 `com.mathreader.boox`，尚未分离为可与稳定版并存的应用；不要为安装实验版卸载稳定版。之前从旧仓库生成的签名测试 APK 也不是独立安装版。建议先使用独立网页版；PWA 的业务存储已采用实验版专用前缀，浏览器回归已验证不改变稳定版数据。相同域名仍共享浏览器安全源，这种命名隔离不是抵御恶意同源脚本的安全边界。
+**安装提醒：** 新 APK 名称为 **Math Reader Codex**，包名 `com.mathreader.boox.codex`，可与稳定版 `com.mathreader.boox` 并存；无需卸载稳定版。新版初始数据为空，不自动迁移旧资料，导入前请备份。之前从旧仓库生成的签名测试 APK 不是此独立安装版。PWA 的业务存储已采用实验版专用前缀，浏览器回归已验证不改变稳定版数据。相同域名仍共享浏览器安全源，这种命名隔离不是抵御恶意同源脚本的安全边界。BOOX 真机安装和手写仍需验收。
 
 Math Reader 是一个面向数学学习的本地优先工作台：把资料阅读、课堂记录、AI 讲义、手写笔记、间隔复习和习题训练放在同一个应用中。
 
@@ -37,7 +37,7 @@ This repository ships the current Math Reader web app as an Android APK. BOOX/E 
 1. 安装项目发布的正式签名 APK。Android 需要允许浏览器或文件管理器“安装未知应用”；最低支持 Android 8.0（API 26）。
 2. 第一次安装默认显示 English，可在 **Settings → Language Settings → Interface Language → 中文** 切换。
 3. 后续更新直接覆盖安装正式签名 APK，不要先卸载；覆盖安装会保留应用私有目录中的数据，卸载则会清除本地文档、笔记和录音。
-4. 如果遇到不同签名或版本冲突，不要卸载稳定版来安装实验版。请先使用本仓库的独立网页；APK 并存身份与签名尚待单独配置。
+4. 如果遇到不同签名或版本冲突，不要卸载稳定版。确认下载的是本仓库的 **Math Reader Codex**，包名 `com.mathreader.boox.codex`；仅在 Codex 实验版之间覆盖更新。
 5. 首次使用建议先进入 **设置 → 存储持久化** 请求授权，再完成 AI 和备份设置。
 
 底部导航从左到右依次是：**课堂、书架、阅读、讲义、笔记、习题、设置**。应用会保存最近打开的文档、页码、笔记页和部分作答进度。
@@ -208,7 +208,7 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 
 **覆盖安装提示签名冲突**
 
-先从旧版导出完整 ZIP，再卸载旧版并安装正式签名版。没有确认备份前不要卸载。
+不要卸载稳定版。核对 APK 包名为 `com.mathreader.boox.codex`、来源为本仓库，并保留完整备份；Codex 实验版只接受相同独立签名的后续更新。
 
 **BOOX 上有短暂残影或第一笔延迟**
 
@@ -227,7 +227,7 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 1. Install an officially signed APK published by this project. Android 8.0 (API 26) or later is required, and Android may ask you to allow the browser or file manager to install unknown apps.
 2. Fresh installs start in English. Change the language under **Settings → Language Settings → Interface Language**.
 3. Install later signed builds over the existing app. An in-place update preserves app-private data; uninstalling removes local documents, notes, and recordings.
-4. If an older test build has a different signature, export a complete ZIP first, verify that it was saved, then uninstall and migrate to the stable build.
+4. This experimental app is **Math Reader Codex**, application ID `com.mathreader.boox.codex`, with its own signing key. It installs alongside the stable app; do not uninstall the stable app. Only update the Codex experiment with this repository's signed builds. Device installation still requires acceptance testing.
 5. On first launch, request **Storage Persistence**, then configure AI and backups as needed.
 
 The bottom navigation is **Class, Library, Reader, Lectures, Notes, Exercise, Settings**. Recent documents, pages, notebook positions, and part of the exercise state are restored automatically.
@@ -341,7 +341,7 @@ BOOX support is an additional Android adaptation, not a separate app workflow:
 - **Generate Lecture asks for an outline:** run Generate Outline on the PDF book first.
 - **OCR finds nothing in a scan:** configure a compatible vision/OCR service; quality depends on scan clarity and model capability.
 - **Cannot find an exported ZIP/PDF/Markdown:** read the save-complete toast, then check Android **Downloads**. Older Android versions may use the app's external files directory.
-- **APK update reports a signature conflict:** export and verify a full ZIP before uninstalling the old build and installing the stable signed APK.
+- **APK update reports a signature conflict:** do not uninstall the stable app. Verify the new APK is from this repository, uses `com.mathreader.boox.codex`, and has the same independent signing certificate as previous Codex builds; keep a complete backup.
 - **Brief BOOX ghosting or a delayed first stroke:** close panels covering the canvas, reselect the pen, or change pages once to refresh the native E Ink region.
 
 For unresolved problems, open an [Issue](https://github.com/none0enon/math-reader-boox-codex/issues) with the APK version, device/Android version, affected module, reproduction steps, and screenshots. Remove API keys, R2 secrets, and private content first.
@@ -379,7 +379,7 @@ For unresolved problems, open an [Issue](https://github.com/none0enon/math-reade
 
 ### 构建
 
-GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支的 `Sign APK` workflow 下载构建产物、核对包名和版本，并使用长期 CI 密钥签名。可在 **Actions → Sign APK → Artifacts** 获取 `math-reader-boox-1.0.2-ci.*`。
+GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支的 `Sign APK` workflow 下载构建产物、核对独立包名和版本，并使用本仓库专用长期密钥签名。可在 **Actions → Sign APK → Artifacts** 获取 `math-reader-boox-codex-1.0.2-ci.*`。
 
 `versionCode` 随 `Build APK` workflow run 自动递增，版本号基数保存在仓库变量 `APK_VERSION_CODE_BASE`。不要降低该变量；重建 workflow 导致 run number 重新计数时，应先提高基数。
 
@@ -390,7 +390,7 @@ GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支�
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
-从 2026-07-16 之前的临时 debug 签名 APK 迁移时，需先导出/同步数据，卸载旧版，再安装一次稳定签名版。CI 签名密钥不得删除或替换，否则无法继续覆盖更新已安装 APK。
+稳定版和历史测试包不需要卸载。实验版使用独立数据目录；迁移资料请通过自行保管的完整 ZIP，避免使用与稳定版相同的云同步目标造成混写。CI 签名密钥不得删除或替换，否则无法继续覆盖更新已安装 Codex APK。
 
 ### 同步上游 Math Reader
 

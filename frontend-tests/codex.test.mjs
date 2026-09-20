@@ -59,6 +59,413 @@ async function createRoutingHarness(overrides = {}) {
     return { context, calls };
 }
 
+async function createExerciseGradingParserHarness() {
+    const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
+    const parserSource = sourceBetween(
+        index,
+        'function robustParseJSONObject(',
+        'function splitQuestionsByNumber('
+    );
+    const context = vm.createContext({
+        i18n: key => key,
+        console: { warn() {} }
+    });
+    vm.runInContext(parserSource, context);
+    return { context, index, parserSource };
+}
+
+async function createGradeAllHarness(aiResult, { codexEnabled = true } = {}) {
+    const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
+    const snippets = [
+        sourceBetween(index, 'function robustParseJSONObject(', 'function splitQuestionsByNumber('),
+        sourceBetween(index, 'async function gradeAllExQuestions(', 'async function exportExTaskAsPDF(')
+    ];
+    const question = { index: 0, latex: 'x+1=3', status: 'pending', score: null };
+    const data = {
+        folders: [{ id: 'folder', tasks: [{ id: 'task', name: 'Task', questions: [question] }] }],
+        wrongByFolder: {}
+    };
+    const calls = { pageSaves: 0, wrongUpserts: 0, metadataSaves: 0, failedCommits: 0 };
+    const context = vm.createContext({
+        appData: { settings: { codexEnabled } },
+        closeLongPressMenu() {},
+        getExercisesData: () => data,
+        showToast() {},
+        i18n: (key, ...args) => [key, ...args].join(':'),
+        confirm: () => true,
+        exIssueQuestionGradingToken: () => 'token',
+        exQuestionGradingGuard: () => () => true,
+        exCollectQuestionDrawingPages: async () => ({
+            allPages: ['data:image/png;base64,AA=='],
+            gradingPages: ['data:image/png;base64,AA==']
+        }),
+        exGradingContent: () => [],
+        callAI: async () => aiResult,
+        exSaveGradedPages: async () => {
+            calls.pageSaves++;
+            return true;
+        },
+        exCreateGradedDrawingCommitId: () => 'commit',
+        exStageGradedPagesCloudCommit: () => ({ id: 'cloud-commit' }),
+        exUpsertWrongQuestion: () => { calls.wrongUpserts++; },
+        saveData: () => {
+            calls.metadataSaves++;
+            return true;
+        },
+        exWaitForExercisesDataSaves: async () => true,
+        exCommitGradedPagesCloudCommit() {},
+        exFailGradedPagesCloudCommit: () => { calls.failedCommits++; },
+        renderExerciseFolderContent() {},
+        console: { error() {}, warn() {} }
+    });
+    vm.runInContext(snippets.join('\n\n'), context);
+    return { context, calls, data, question };
+}
+
+async function createSingleQuestionGradingHarness(aiResult) {
+    const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
+    const snippets = [
+        sourceBetween(index, 'function robustParseJSONObject(', 'function splitQuestionsByNumber('),
+        sourceBetween(index, 'async function exCompleteQuestionNow(', '// Wrong exercises folder')
+    ];
+    const question = { index: 0, latex: 'x+1=3', status: 'pending', score: null };
+    const expectedState = {
+        folderId: 'folder',
+        taskId: 'task',
+        questionIndex: 0,
+        isWrong: false,
+        questions: [question]
+    };
+    const calls = { metadataSaves: 0, wrongUpserts: 0, failedCommits: 0 };
+    const context = vm.createContext({
+        appData: { settings: { codexEnabled: true } },
+        exDoingState: expectedState,
+        exTimerStartedAt: null,
+        exTimerSeconds: 0,
+        exTimerInterval: null,
+        exCompleteGenerationGuard: () => () => true,
+        exWaitForDrawingRestore: async () => true,
+        exWaitForPendingDrawingSaves: async () => true,
+        exCollectPageImages: () => ['data:image/png;base64,AA=='],
+        exIssueQuestionGradingToken: () => 'token',
+        exQuestionGradingGuard: () => () => true,
+        saveCurrentDrawingToCache: async () => true,
+        exDropBlankPages: async pages => pages,
+        showToast() {},
+        i18n: (key, ...args) => [key, ...args].join(':'),
+        exGradingContent: () => [],
+        callAI: async () => aiResult,
+        exFailGradedPagesCloudCommit: () => { calls.failedCommits++; },
+        saveData: () => {
+            calls.metadataSaves++;
+            return true;
+        },
+        exUpsertWrongQuestion: () => { calls.wrongUpserts++; },
+        console: { error() {}, warn() {} }
+    });
+    vm.runInContext(snippets.join('\n\n'), context);
+    return { context, calls, expectedState, question };
+}
+
+async function createNotebookReviewGradingHarness(aiResult, { codexEnabled = true } = {}) {
+    const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
+    const snippets = [
+        sourceBetween(index, 'function robustParseJSONObject(', 'function splitQuestionsByNumber('),
+        sourceBetween(
+            index,
+            'function parseNotebookReviewGradingResponse(',
+            '// 完成 Quiz：截取画布'
+        ),
+        "let qzCurrentReviewId = 'review'; let qzCurrentQuizId = 'quiz';",
+        sourceBetween(
+            index,
+            'async function nbCompleteQuizFs(',
+            '// Quiz 评分完成后推进复习流程'
+        )
+    ];
+    const quiz = {
+        id: 'quiz',
+        content: '1. Solve x + 1 = 3.',
+        completedAt: null,
+        score: null
+    };
+    const review = {
+        id: 'review',
+        pageId: 'page',
+        stage: 0,
+        extra: 0,
+        status: 'pending',
+        quizzes: [quiz]
+    };
+    const button = { disabled: false, textContent: 'done' };
+    const canvas = { width: 100, height: 100 };
+    const calls = {
+        draftSaves: 0,
+        touches: 0,
+        saves: 0,
+        renders: 0,
+        updates: 0,
+        syncs: 0,
+        shows: 0,
+        advances: 0,
+        toasts: []
+    };
+    const context = vm.createContext({
+        appData: { settings: { codexEnabled } },
+        nbData: () => ({ reviews: [review] }),
+        nbSaveQuizDraftToReview: () => {
+            calls.draftSaves++;
+            return true;
+        },
+        getQzCanvasDataURL: () => 'data:image/png;base64,ANSWER',
+        document: {
+            createElement: () => ({ toDataURL: () => 'data:image/png;base64,BLANK' }),
+            getElementById: id => id === 'nbQuizFsCompleteBtn' ? button :
+                (id === 'nbQuizFsCanvas' ? canvas : null)
+        },
+        callAI: async () => aiResult,
+        i18n: (key, ...args) => [key, ...args].join(':'),
+        showToast: value => calls.toasts.push(value),
+        nbTouchReview: () => { calls.touches++; },
+        saveData: () => { calls.saves++; },
+        renderNbReviewList: () => { calls.renders++; },
+        nbUpdateReviewBtn: () => { calls.updates++; },
+        triggerSyncOnFileChange: () => { calls.syncs++; },
+        nbShowQuiz: () => { calls.shows++; },
+        nbAdvanceReviewAfterQuiz: () => { calls.advances++; },
+        nbCloseQuizFullscreen() {},
+        console: { error() {}, warn() {} }
+    });
+    vm.runInContext(snippets.join('\n\n'), context);
+    return { context, calls, review, quiz, button, index };
+}
+
+test('strict exercise grading accepts complete structured responses including score zero', async () => {
+    const { context } = await createExerciseGradingParserHarness();
+    const tagged = context.parseExerciseGradingResponse(
+        '<score>0</score>\n<solution>Full solution</solution>\n<errors>No errors</errors>\n<similar>Another problem</similar>',
+        { strict: true }
+    );
+    assert.deepEqual(JSON.parse(JSON.stringify(tagged)), {
+        score: 0,
+        solution: 'Full solution',
+        errors: 'No errors',
+        similar_problem: 'Another problem'
+    });
+
+    const json = context.parseExerciseGradingResponse(
+        '{"score":10,"solution":"S","errors":"E","similar_problem":"P"}',
+        { strict: true }
+    );
+    assert.equal(json.score, 10);
+});
+
+test('strict exercise grading rejects invalid scores, missing sections, and prose', async () => {
+    const { context } = await createExerciseGradingParserHarness();
+    const complete = score => `<score>${score}</score><solution>S</solution><errors>E</errors><similar>P</similar>`;
+    const invalidResponses = [
+        '<solution>S</solution><errors>E</errors><similar>P</similar>',
+        complete('NaN'),
+        complete('4.5'),
+        complete('-1'),
+        complete('11'),
+        '<score>5</score><errors>E</errors><similar>P</similar>',
+        '<score>5</score><solution>S</solution><similar>P</similar>',
+        '<score>5</score><solution>S</solution><errors>E</errors>',
+        '<score>5</score><solution> </solution><errors>E</errors><similar>P</similar>',
+        '{"score":5,"solution":"S","errors":"E","similar_problem":"P"',
+        '{"score":5,"solution":"S","errors":"E","similar_problem":"P",}',
+        "{'score':5,'solution':'S','errors':'E','similar_problem':'P'}",
+        'null',
+        '[]',
+        '{"score":1e999,"solution":"S","errors":"E","similar_problem":"P"}',
+        '{"score":4.5,"solution":"S","errors":"E","similar_problem":"P"}',
+        '{"score":"NaN","solution":"S","errors":"E","similar_problem":"P"}',
+        'Unable to grade this answer'
+    ];
+
+    for (const response of invalidResponses) {
+        assert.throws(
+            () => context.parseExerciseGradingResponse(response, { strict: true }),
+            error => error.code === 'EXERCISE_GRADING_FORMAT_INVALID',
+            response
+        );
+    }
+});
+
+test('legacy exercise grading keeps permissive parsing when Codex is disabled', async () => {
+    const { context } = await createExerciseGradingParserHarness();
+    const grading = context.parseExerciseGradingResponse('Unable to grade this answer', { strict: false });
+    assert.equal(grading.score, 5);
+    assert.equal(grading.solution, 'Unable to grade this answer');
+});
+
+test('all exercise grading commit callers enable strict parsing only for Codex', async () => {
+    const { index } = await createExerciseGradingParserHarness();
+    const guardedCalls = index.match(/parseExerciseGradingResponse\(result,\s*\{\s*strict:\s*!!\(appData\.settings && appData\.settings\.codexEnabled\)\s*\}\)/g) || [];
+    assert.equal(guardedCalls.length, 3);
+
+    const gradeAllSource = sourceBetween(
+        index,
+        'async function gradeAllExQuestions(',
+        'async function exportExTaskAsPDF('
+    );
+    assert.match(gradeAllSource, /confirm\(i18n\('confirm_grade_all'\)\)/);
+    assert.doesNotMatch(gradeAllSource, /confirm\(i18n\('confirm_delete'\)\)/);
+    assert.equal((index.match(/confirm_grade_all:/g) || []).length, 3);
+});
+
+test('grade-all does not persist or mark done after an invalid Codex response', async () => {
+    const { context, calls, question } = await createGradeAllHarness('Unable to grade this answer');
+    await context.gradeAllExQuestions('folder', 'task');
+
+    assert.equal(question.status, 'pending');
+    assert.equal(question.score, null);
+    assert.equal(calls.pageSaves, 0);
+    assert.equal(calls.wrongUpserts, 0);
+    assert.equal(calls.metadataSaves, 0);
+    assert.equal(calls.failedCommits, 1);
+});
+
+test('grade-all commits a valid Codex score of zero', async () => {
+    const response = '<score>0</score><solution>S</solution><errors>E</errors><similar>P</similar>';
+    const { context, calls, question } = await createGradeAllHarness(response);
+    await context.gradeAllExQuestions('folder', 'task');
+
+    assert.equal(question.status, 'done');
+    assert.equal(question.score, 0);
+    assert.equal(calls.pageSaves, 1);
+    assert.equal(calls.wrongUpserts, 1);
+    assert.equal(calls.metadataSaves, 1);
+});
+
+test('single-question completion does not mark done after an invalid Codex response', async () => {
+    const { context, calls, expectedState, question } =
+        await createSingleQuestionGradingHarness('<score>5</score><solution>S</solution>');
+    await context.exCompleteQuestionNow(expectedState, 'completion-token');
+
+    assert.equal(question.status, 'pending');
+    assert.equal(question.score, null);
+    assert.equal(calls.wrongUpserts, 0);
+    assert.equal(calls.metadataSaves, 0);
+    assert.equal(calls.failedCommits, 1);
+});
+
+test('strict Notebook Review grading accepts its complete JSON contract including score zero', async () => {
+    const response = JSON.stringify({
+        score: 0,
+        per_question: [{ q: ' 1 ', correct: false, comment: ' Missing the final step. ' }],
+        solutions: ' Full derivation. '
+    });
+    const { context } = await createNotebookReviewGradingHarness(response);
+    const grading = context.parseNotebookReviewGradingResponse(response, { strict: true });
+    assert.deepEqual(JSON.parse(JSON.stringify(grading)), {
+        score: 0,
+        per_question: [{ q: '1', correct: false, comment: 'Missing the final step.' }],
+        solutions: 'Full derivation.'
+    });
+});
+
+test('strict Notebook Review grading rejects malformed JSON and incomplete fields', async () => {
+    const valid = {
+        score: 5,
+        per_question: [{ q: '1', correct: true, comment: 'Correct.' }],
+        solutions: 'Solution.'
+    };
+    const invalidResponses = [
+        'Unable to grade this answer',
+        '8/10',
+        "{'score':5,'per_question':[],'solutions':'S'}",
+        '{"score":5,"per_question":[],"solutions":"S",}',
+        'null',
+        '[]',
+        JSON.stringify({ ...valid, score: '5' }),
+        JSON.stringify({ ...valid, score: null }),
+        JSON.stringify({ ...valid, score: -1 }),
+        JSON.stringify({ ...valid, score: 11 }),
+        '{"score":1e999,"per_question":[{"q":"1","correct":true,"comment":"C"}],"solutions":"S"}',
+        JSON.stringify({ per_question: valid.per_question, solutions: valid.solutions }),
+        JSON.stringify({ ...valid, per_question: [] }),
+        JSON.stringify({ ...valid, per_question: 'not an array' }),
+        JSON.stringify({ ...valid, per_question: [{ q: '', correct: true, comment: 'C' }] }),
+        JSON.stringify({ ...valid, per_question: [{ q: '1', correct: 'true', comment: 'C' }] }),
+        JSON.stringify({ ...valid, per_question: [{ q: '1', correct: true, comment: '' }] }),
+        JSON.stringify({ score: 5, per_question: valid.per_question }),
+        JSON.stringify({ ...valid, solutions: ' ' })
+    ];
+    const { context } = await createNotebookReviewGradingHarness(JSON.stringify(valid));
+
+    for (const response of invalidResponses) {
+        assert.throws(
+            () => context.parseNotebookReviewGradingResponse(response, { strict: true }),
+            error => error.code === 'NOTEBOOK_REVIEW_GRADING_FORMAT_INVALID',
+            response
+        );
+    }
+});
+
+test('invalid Codex Notebook Review grading saves no grade and does not advance review', async () => {
+    const { context, calls, review, quiz, button } =
+        await createNotebookReviewGradingHarness('Unable to grade this answer');
+    await context.nbCompleteQuizFs();
+
+    assert.equal(calls.draftSaves, 1, 'the pre-request answer draft remains allowed');
+    assert.equal(quiz.score, null);
+    assert.equal(quiz.completedAt, null);
+    assert.equal(quiz.aiComment, undefined);
+    assert.deepEqual(
+        { stage: review.stage, extra: review.extra, status: review.status },
+        { stage: 0, extra: 0, status: 'pending' }
+    );
+    assert.equal(calls.touches, 0);
+    assert.equal(calls.saves, 0);
+    assert.equal(calls.syncs, 0);
+    assert.equal(calls.shows, 0);
+    assert.equal(calls.advances, 0);
+    assert.equal(button.disabled, false);
+    assert.equal(button.textContent, 'done');
+    assert.match(calls.toasts.at(-1), /^grading_failed:/);
+});
+
+test('valid Codex Notebook Review grading commits score zero and advances once', async () => {
+    const response = JSON.stringify({
+        score: 0,
+        per_question: [{ q: '1', correct: false, comment: 'Incorrect sign.' }],
+        solutions: 'x = 2.'
+    });
+    const { context, calls, quiz } = await createNotebookReviewGradingHarness(response);
+    await context.nbCompleteQuizFs();
+
+    assert.equal(quiz.score, 0);
+    assert.ok(quiz.completedAt);
+    assert.match(quiz.aiComment, /Incorrect sign/);
+    assert.equal(calls.touches, 1);
+    assert.equal(calls.saves, 1);
+    assert.equal(calls.syncs, 1);
+    assert.equal(calls.shows, 1);
+    assert.equal(calls.advances, 1);
+});
+
+test('legacy Notebook Review grading retains the default-five prose fallback', async () => {
+    const { context, calls, quiz } = await createNotebookReviewGradingHarness(
+        'Unable to grade this answer',
+        { codexEnabled: false }
+    );
+    const grading = context.parseNotebookReviewGradingResponse(
+        'Unable to grade this answer',
+        { strict: false }
+    );
+    assert.equal(grading.score, 5);
+    assert.deepEqual(JSON.parse(JSON.stringify(grading.per_question)), []);
+    assert.equal(grading.solutions, 'Unable to grade this answer');
+
+    await context.nbCompleteQuizFs();
+    assert.equal(quiz.score, 5);
+    assert.ok(quiz.completedAt);
+    assert.equal(calls.saves, 1);
+    assert.equal(calls.advances, 1);
+});
+
 test('Gateway URL permits HTTPS and browser loopback HTTP only', () => {
     assert.equal(gateway.normalizeBaseUrl('https://example.test/gateway/'), 'https://example.test/gateway');
     assert.equal(gateway.normalizeBaseUrl('http://127.0.0.1:8765/'), 'http://127.0.0.1:8765');

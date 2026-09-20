@@ -9,6 +9,8 @@ captures/
 *.apk
 *.aab
 *.keystore
+*.p12
+*.jks
 
 # Personal gateway dependencies, credentials and request files.
 gateway/node_modules/

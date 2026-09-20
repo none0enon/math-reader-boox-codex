@@ -137,9 +137,9 @@ jobs:
           fi
 
           unsigned_apk="unsigned/app-release-unsigned.apk"
-          keystore="$RUNNER_TEMP/math-reader-boox-ci-signing.p12"
+          keystore="$RUNNER_TEMP/math-reader-boox-codex-ci-signing.p12"
           aligned_apk="$RUNNER_TEMP/app-release-aligned.apk"
-          signed_apk="signed/math-reader-boox-${EXPECTED_VERSION_NAME}.apk"
+          signed_apk="signed/math-reader-boox-codex-${EXPECTED_VERSION_NAME}.apk"
           trap 'rm -f "$keystore"' EXIT
 
           test -f "$unsigned_apk"
@@ -167,7 +167,7 @@ jobs:
             printf '%s\n' "$package_line" |
               sed -n "s/.*versionName='\\([^']*\\)'.*/\\1/p"
           )"
-          if [[ "$actual_application_id" != "com.mathreader.boox" ]]; then
+          if [[ "$actual_application_id" != "com.mathreader.boox.codex" ]]; then
             echo "::error::Unexpected applicationId: $actual_application_id"
             exit 1
           fi
@@ -189,7 +189,7 @@ jobs:
           "$APKSIGNER" sign \
             --ks "$keystore" \
             --ks-type PKCS12 \
-            --ks-key-alias math-reader-boox-ci \
+            --ks-key-alias math-reader-codex-release \
             --ks-pass env:APK_SIGNING_PASSWORD \
             --key-pass env:APK_SIGNING_PASSWORD \
             --out "$signed_apk" \
@@ -214,7 +214,7 @@ jobs:
       - name: Upload updateable signed APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: math-reader-boox-${{ steps.version.outputs.name }}-${{ github.event.workflow_run.head_sha }}
+          name: math-reader-boox-codex-${{ steps.version.outputs.name }}-${{ github.event.workflow_run.head_sha }}
           path: signed/*.apk
           if-no-files-found: error
           compression-level: 0

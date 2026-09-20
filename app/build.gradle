@@ -14,7 +14,8 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.mathreader.boox"
+        // Independent install identity; keep the Java namespace stable to avoid a broad source rename.
+        applicationId "com.mathreader.boox.codex"
         minSdk 26
         targetSdk 30
         versionCode ciVersionCode
