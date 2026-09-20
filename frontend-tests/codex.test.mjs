@@ -26,11 +26,13 @@ function sourceBetween(source, startMarker, endMarker) {
 async function createRoutingHarness(overrides = {}) {
     const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
     const snippets = [
+        sourceBetween(index, 'const OUTLINE_PDF_CHUNK_MAX_PAGES', 'function isPlaceholderPdfBookmark('),
         sourceBetween(index, 'function isGeminiUrl(', 'function _configuredGeminiRecordingConfig('),
         sourceBetween(index, 'function _configuredGeminiRecordingConfigs(', 'async function fetchModels('),
         sourceBetween(index, 'async function callAI(', 'async function doCodexGatewayRequest('),
         sourceBetween(index, 'async function doConfiguredGeminiAudioRequest(', 'async function doAIRequest('),
-        sourceBetween(index, 'function isOutlineTokenLimitError(', 'function buildOutlinePageRanges(')
+        sourceBetween(index, 'function isOutlineTokenLimitError(', 'function buildOutlinePageRanges('),
+        sourceBetween(index, 'function buildOutlinePageRanges(', 'function outlineDraftSignature(')
     ];
     const calls = { codex: [], gemini: [], legacy: [], toasts: [] };
     const context = vm.createContext({
@@ -212,6 +214,38 @@ test('Gateway body-size 413 errors trigger outline chunk fallback', async () => 
     assert.equal(context.isOutlineTokenLimitError(receivedError), true);
     assert.equal(context.isOutlineTokenLimitError({ code: 'codex_gateway_http_413', status: 413 }), true);
     assert.equal(context.isOutlineTokenLimitError({ code: 'unrelated', status: 400 }), false);
+});
+
+test('Codex outline preflight skips hard limits and starts with at most 48-page chunks', async () => {
+    const { context } = await createRoutingHarness();
+    const codex = { codexEnabled: true };
+    const legacy = { codexEnabled: false };
+    const maxBytes = 64 * 1024 * 1024;
+
+    assert.equal(context.outlinePdfChunkMaxPages(codex), 48);
+    assert.equal(context.outlinePdfChunkMaxPages(legacy), 200);
+    assert.equal(context.shouldSkipWholeOutlinePdf(codex, 49, 1), true);
+    assert.equal(context.shouldSkipWholeOutlinePdf(codex, 48, maxBytes + 1), true);
+    assert.equal(context.shouldSkipWholeOutlinePdf(codex, 48, maxBytes), false);
+    assert.equal(context.shouldSkipWholeOutlinePdf(legacy, 500, maxBytes + 1), false);
+
+    const codexRanges = JSON.parse(JSON.stringify(context.buildOutlinePageRanges(125, 48, [])));
+    assert.deepEqual(codexRanges, [
+        { startPage: 1, endPage: 48 },
+        { startPage: 49, endPage: 96 },
+        { startPage: 97, endPage: 125 }
+    ]);
+    assert.ok(codexRanges.every(range => range.endPage - range.startPage + 1 <= 48));
+    const legacyRanges = JSON.parse(JSON.stringify(context.buildOutlinePageRanges(401, 200, [])));
+    assert.deepEqual(legacyRanges, [
+        { startPage: 1, endPage: 200 },
+        { startPage: 201, endPage: 400 },
+        { startPage: 401, endPage: 401 }
+    ]);
+
+    const index = await readFile(new URL('../app/src/main/assets/www/index.html', import.meta.url), 'utf8');
+    assert.match(index, /draft\.wholeTokenLimited \|\| skipWholeOutlinePdf/);
+    assert.match(index, /totalPages, outlineChunkMaxPages, pdfInfo\.outlinePages/);
 });
 
 test('request timeout is capped at ten minutes and aborts cleanly', async () => {

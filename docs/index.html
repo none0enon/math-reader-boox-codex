@@ -19896,6 +19896,19 @@
         }
 
         const OUTLINE_PDF_CHUNK_MAX_PAGES = 200;
+        const CODEX_OUTLINE_PDF_MAX_PAGES = 48;
+        const CODEX_OUTLINE_PDF_MAX_BYTES = 64 * 1024 * 1024;
+
+        function outlinePdfChunkMaxPages(settings) {
+            return settings?.codexEnabled ? CODEX_OUTLINE_PDF_MAX_PAGES : OUTLINE_PDF_CHUNK_MAX_PAGES;
+        }
+
+        function shouldSkipWholeOutlinePdf(settings, totalPages, bytesLength) {
+            return !!settings?.codexEnabled && (
+                Number(totalPages) > CODEX_OUTLINE_PDF_MAX_PAGES ||
+                Number(bytesLength) > CODEX_OUTLINE_PDF_MAX_BYTES
+            );
+        }
 
         function isPlaceholderPdfBookmark(title) {
             return /^(?:p|page)\s*0*\d+$/i.test(String(title || '').trim());
@@ -20032,11 +20045,11 @@
             return ranges;
         }
 
-        function outlineDraftSignature(pdfInfo, bytesLength) {
+        function outlineDraftSignature(pdfInfo, bytesLength, chunkMaxPages) {
             const settings = appData.settings || {};
             return [
                 pdfInfo.fingerprint || '', bytesLength, pdfInfo.totalPages || '',
-                OUTLINE_PDF_CHUNK_MAX_PAGES, currentLang,
+                chunkMaxPages, currentLang,
                 settings.codexEnabled ? 'codex:on' : 'codex:off',
                 settings.codexGatewayUrl || '', settings.codexModel || '',
                 settings.codexReasoningEffort || '',
@@ -20119,7 +20132,14 @@
             const pdfInfo = await inspectBookPdf(bytes);
             const totalPages = pdfInfo.totalPages || Number(book.totalPages) || 1;
             const existingOutline = pdfInfo.outline;
-            const draftSignature = outlineDraftSignature(pdfInfo, bytes.length);
+            const outlineSettings = appData.settings || {};
+            const outlineChunkMaxPages = outlinePdfChunkMaxPages(outlineSettings);
+            const skipWholeOutlinePdf = shouldSkipWholeOutlinePdf(
+                outlineSettings, totalPages, bytes.length
+            );
+            const draftSignature = outlineDraftSignature(
+                pdfInfo, bytes.length, outlineChunkMaxPages
+            );
             let draft = book.outlineGenerationDraft;
             if (!draft || draft.signature !== draftSignature) {
                 draft = {
@@ -20149,7 +20169,9 @@ ${i18n('prompt_outline_gen')}`;
                 let wholeRequestSucceeded = false;
                 let wholeResult = null;
                 try {
-                    if (draft.wholeTokenLimited) throw new Error('OUTLINE_WHOLE_TOKEN_LIMIT_ALREADY_KNOWN');
+                    if (draft.wholeTokenLimited || skipWholeOutlinePdf) {
+                        throw new Error('OUTLINE_WHOLE_TOKEN_LIMIT_ALREADY_KNOWN');
+                    }
                     wholeResult = await callAI(i18n('prompt_outline_sys'), [{ role: 'user', content: userText }], {
                         maxTokens: 8192,
                         pdfAttachment: { bytes, name: bookTitle + '.pdf' }
@@ -20177,7 +20199,7 @@ ${i18n('prompt_outline_gen')}`;
                     if (!window.PDFLib) throw new Error(i18n('pdf_lib_not_loaded'));
                     const sourcePdf = await PDFLib.PDFDocument.load(bytes);
                     const ranges = buildOutlinePageRanges(
-                        totalPages, OUTLINE_PDF_CHUNK_MAX_PAGES, pdfInfo.outlinePages
+                        totalPages, outlineChunkMaxPages, pdfInfo.outlinePages
                     );
                     for (let chunkIndex = 0; chunkIndex < ranges.length; chunkIndex++) {
                         const { startPage: chunkStart, endPage: chunkEnd } = ranges[chunkIndex];
