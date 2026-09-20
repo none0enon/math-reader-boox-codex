@@ -271,7 +271,7 @@ export async function startGateway(config = loadConfig(), options = {}) {
   const protocol = gateway.tls ? 'https' : 'http';
   const host = typeof address === 'object' && address?.family === 'IPv6' ? `[${config.host}]` : config.host;
   process.stdout.write(
-    `Math Reader Codex gateway listening on ${protocol}://${host}:${address.port}\n` +
+    `math-reader-codex gateway listening on ${protocol}://${host}:${address.port}\n` +
       `Bearer token file: ${gateway.tokenFile}\n`,
   );
 

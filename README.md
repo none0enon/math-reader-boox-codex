@@ -1,18 +1,18 @@
-# Math Reader Codex (experimental)
+# math-reader-codex
 
-这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。PWA 使用本仓库自己的 GitHub Pages 部署，APK 使用独立包名和独立长期签名。请在本仓库提交 Issue 和后续修改。
+这是独立、公开的 math-reader-codex 项目仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并继续开发；本仓库的改动不会发布回稳定仓库。PWA 使用本仓库自己的 GitHub Pages 部署，APK 使用独立包名和独立长期签名。请在本仓库提交 Issue 和后续修改。
 
-**网页版：** https://none0enon.github.io/math-reader-boox-codex/ 。首次打开是独立的空数据空间，不会自动导入稳定版资料；请自行备份后按需导入。Codex AI 需要连接你自己的私有网关，网页中没有内置账号、令牌或公开推理服务。
+**网页版：** https://none0enon.github.io/math-reader-codex/ 。首次打开是独立的空数据空间，不会自动导入稳定版资料；请自行备份后按需导入。Codex AI 需要连接你自己的私有网关，网页中没有内置账号、令牌或公开推理服务。
 
-This is an independent experimental repository for the personal ChatGPT-authenticated Codex gateway. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
+This is the independent math-reader-codex repository with a personal ChatGPT-authenticated Codex gateway integration. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
 
-**安装提醒：** 新 APK 名称为 **Math Reader Codex**，包名 `com.mathreader.boox.codex`，可与稳定版 `com.mathreader.boox` 并存；无需卸载稳定版。新版初始数据为空，不自动迁移旧资料，导入前请备份。之前从旧仓库生成的签名测试 APK 不是此独立安装版。PWA 的业务存储已采用实验版专用前缀，浏览器回归已验证不改变稳定版数据。相同域名仍共享浏览器安全源，这种命名隔离不是抵御恶意同源脚本的安全边界。BOOX 真机安装和手写仍需验收。
+**安装提醒：** 本仓库 APK 的显示名称为 **math-reader-codex**，包名 `com.mathreader.boox.codex`，可与稳定版 `com.mathreader.boox` 并存；无需卸载稳定版。新版初始数据为空，不自动迁移旧资料，导入前请备份。之前从旧仓库生成的签名测试 APK 不是本仓库当前包名的版本。PWA 的业务存储沿用本仓库已有专用前缀以兼容现有数据，浏览器回归已验证不改变稳定版数据。相同域名仍共享浏览器安全源，这种命名隔离不是抵御恶意同源脚本的安全边界。BOOX 真机安装和手写仍需验收。
 
-Math Reader 是一个面向数学学习的本地优先工作台：把资料阅读、课堂记录、AI 讲义、手写笔记、间隔复习和习题训练放在同一个应用中。
+math-reader-codex 是一个面向数学学习的本地优先工作台：把资料阅读、课堂记录、AI 讲义、手写笔记、间隔复习和习题训练放在同一个应用中。
 
-This repository ships the current Math Reader web app as an Android APK. BOOX/E Ink support is an additional platform adaptation: on supported BOOX devices, handwriting is connected to the Onyx pen SDK for lower latency, while the main product remains Math Reader itself.
+This repository ships the current math-reader-codex web app as an Android APK. BOOX/E Ink support is an additional platform adaptation: on supported BOOX devices, handwriting is connected to the Onyx pen SDK for lower latency, while the main product remains math-reader-codex itself.
 
-[中文使用说明](#中文使用说明) · [English User Guide](#english-user-guide) · [Releases](https://github.com/none0enon/math-reader-boox-codex/releases) · [Issues](https://github.com/none0enon/math-reader-boox-codex/issues)
+[中文使用说明](#中文使用说明) · [English User Guide](#english-user-guide) · [Releases](https://github.com/none0enon/math-reader-codex/releases) · [Issues](https://github.com/none0enon/math-reader-codex/issues)
 
 ## 当前功能
 
@@ -37,14 +37,14 @@ This repository ships the current Math Reader web app as an Android APK. BOOX/E 
 1. 安装项目发布的正式签名 APK。Android 需要允许浏览器或文件管理器“安装未知应用”；最低支持 Android 8.0（API 26）。
 2. 第一次安装默认显示 English，可在 **Settings → Language Settings → Interface Language → 中文** 切换。
 3. 后续更新直接覆盖安装正式签名 APK，不要先卸载；覆盖安装会保留应用私有目录中的数据，卸载则会清除本地文档、笔记和录音。
-4. 如果遇到不同签名或版本冲突，不要卸载稳定版。确认下载的是本仓库的 **Math Reader Codex**，包名 `com.mathreader.boox.codex`；仅在 Codex 实验版之间覆盖更新。
+4. 如果遇到不同签名或版本冲突，不要卸载稳定版。确认下载的是本仓库的 **math-reader-codex** APK，包名 `com.mathreader.boox.codex`；仅在本仓库使用相同签名的版本之间覆盖更新。
 5. 首次使用建议先进入 **设置 → 存储持久化** 请求授权，再完成 AI 和备份设置。
 
 底部导航从左到右依次是：**课堂、书架、阅读、讲义、笔记、习题、设置**。应用会保存最近打开的文档、页码、笔记页和部分作答进度。
 
 ### 2. 配置 AI
 
-**个人 ChatGPT 订阅模式（实验性）**：可在 API Setting 中启用 Codex 私有网关，让数学问答、图片/PDF、讲义和批改使用 Codex，音频继续使用 Gemini。无需 OpenAI API Key，但需要一台运行网关的电脑/私有服务器、独立 ChatGPT 登录和私有 HTTPS 连接；不是把后端托管在 Codex 桌面应用内。部署、限制与验证步骤见 [个人 Codex 网关](gateway/README.md)。默认关闭，不改变现有 API 设置或 APK/PWA 发布流程。
+**个人 ChatGPT 订阅模式**：可在 API Setting 中启用 Codex 私有网关，让数学问答、图片/PDF、讲义和批改使用 Codex，音频继续使用 Gemini。无需 OpenAI API Key，但需要一台运行网关的电脑/私有服务器、独立 ChatGPT 登录和私有 HTTPS 连接；不是把后端托管在 Codex 桌面应用内。部署、限制与验证步骤见 [个人 Codex 网关](gateway/README.md)。默认关闭，不改变现有 API 设置或 APK/PWA 发布流程。
 
 进入 **设置 → API Setting**：
 
@@ -176,13 +176,13 @@ AI 识题完成前不要关闭任务页面。照片应尽量正对、无阴影�
 
 ### 10. BOOX / 墨水屏兼容性
 
-BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader 工作流：
+BOOX 是本仓库 Android 发行版的附加适配，不改变上述 math-reader-codex 工作流：
 
 - 支持的 BOOX 设备会自动使用 Onyx `TouchHelper` 为 PDF 批注、笔记本、习题、复习 Quiz、草稿和讲义画笔提供原生低延迟直渲染。
-- 页面切换到橡皮、套索、文本或图形等工具时，原生直渲染会暂停并把输入交回页面；抬笔后笔迹仍由 Math Reader 自己保存。
+- 页面切换到橡皮、套索、文本或图形等工具时，原生直渲染会暂停并把输入交回页面；抬笔后笔迹仍由 math-reader-codex 自己保存。
 - 开启 **设置 → 墨水屏模式** 后，阅读器中手指点按左右区域翻页，触控笔继续书写或套索。
 - **优化书写延迟** 是页面侧的习题书写选项；BOOX 原生 SDK 是否可用由 APK 自动检测。
-- 非 BOOX Android 设备会回退到普通 WebView 输入，Math Reader 的其他功能仍可使用。
+- 非 BOOX Android 设备会回退到普通 WebView 输入，math-reader-codex 的其他功能仍可使用。
 
 ### 11. 常见问题
 
@@ -208,13 +208,13 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 
 **覆盖安装提示签名冲突**
 
-不要卸载稳定版。核对 APK 包名为 `com.mathreader.boox.codex`、来源为本仓库，并保留完整备份；Codex 实验版只接受相同独立签名的后续更新。
+不要卸载稳定版。核对 APK 包名为 `com.mathreader.boox.codex`、来源为本仓库，并保留完整备份；本仓库 APK 只接受相同独立签名的后续更新。
 
 **BOOX 上有短暂残影或第一笔延迟**
 
 关闭遮挡画布的面板，重新选择画笔或切换一次页面。撤销、橡皮和工具切换后，E Ink 直渲染层与页面画布可能需要一次区域刷新。
 
-仍无法解决时，请提交 [Issue](https://github.com/none0enon/math-reader-boox-codex/issues)，写明 APK 版本、设备/Android 版本、功能模块、复现步骤和截图；务必隐藏 API Key、R2 密钥和私人资料。
+仍无法解决时，请提交 [Issue](https://github.com/none0enon/math-reader-codex/issues)，写明 APK 版本、设备/Android 版本、功能模块、复现步骤和截图；务必隐藏 API Key、R2 密钥和私人资料。
 
 ---
 
@@ -227,14 +227,14 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 1. Install an officially signed APK published by this project. Android 8.0 (API 26) or later is required, and Android may ask you to allow the browser or file manager to install unknown apps.
 2. Fresh installs start in English. Change the language under **Settings → Language Settings → Interface Language**.
 3. Install later signed builds over the existing app. An in-place update preserves app-private data; uninstalling removes local documents, notes, and recordings.
-4. This experimental app is **Math Reader Codex**, application ID `com.mathreader.boox.codex`, with its own signing key. It installs alongside the stable app; do not uninstall the stable app. Only update the Codex experiment with this repository's signed builds. Device installation still requires acceptance testing.
+4. This repository's app is **math-reader-codex**, application ID `com.mathreader.boox.codex`, with its own signing key. It installs alongside the stable app; do not uninstall the stable app. Only update it with this repository's signed builds. Device installation still requires acceptance testing.
 5. On first launch, request **Storage Persistence**, then configure AI and backups as needed.
 
 The bottom navigation is **Class, Library, Reader, Lectures, Notes, Exercise, Settings**. Recent documents, pages, notebook positions, and part of the exercise state are restored automatically.
 
 ### 2. Configure AI
 
-**Personal ChatGPT subscription mode (experimental):** enable the private Codex gateway in API Setting to route mathematics, images/PDFs, lectures and grading to Codex while retaining Gemini for audio. No OpenAI API key is used. A gateway host, separate ChatGPT login and private HTTPS connection are required; Codex desktop itself does not host the backend. See the [gateway setup and limitations](gateway/README.md). The option is off by default and preserves existing API settings and APK/PWA release workflows.
+**Personal ChatGPT subscription mode:** enable the private Codex gateway in API Setting to route mathematics, images/PDFs, lectures and grading to Codex while retaining Gemini for audio. No OpenAI API key is used. A gateway host, separate ChatGPT login and private HTTPS connection are required; Codex desktop itself does not host the backend. See the [gateway setup and limitations](gateway/README.md). The option is off by default and preserves existing API settings and APK/PWA release workflows.
 
 Open **Settings → API Setting**:
 
@@ -329,10 +329,10 @@ Settings include user/AI profiles, notifications, photo retention, exercise time
 BOOX support is an additional Android adaptation, not a separate app workflow:
 
 - Supported BOOX devices automatically use Onyx `TouchHelper` for low-latency direct rendering on PDF annotations, notebooks, exercises, review quizzes, scratchpads, and lecture drawing.
-- Native rendering pauses for eraser, lasso, text, shape, and other page-controlled tools. Math Reader still owns the saved stroke data.
+- Native rendering pauses for eraser, lasso, text, shape, and other page-controlled tools. math-reader-codex still owns the saved stroke data.
 - With **E-Ink Mode** enabled, finger taps turn reader pages while the stylus continues to write or lasso.
 - **Optimize Writing Latency** is the web app's exercise-canvas setting; BOOX native SDK availability is detected automatically.
-- Non-BOOX Android devices fall back to normal WebView input while keeping the rest of Math Reader available.
+- Non-BOOX Android devices fall back to normal WebView input while keeping the rest of math-reader-codex available.
 
 ### 11. Troubleshooting
 
@@ -341,10 +341,10 @@ BOOX support is an additional Android adaptation, not a separate app workflow:
 - **Generate Lecture asks for an outline:** run Generate Outline on the PDF book first.
 - **OCR finds nothing in a scan:** configure a compatible vision/OCR service; quality depends on scan clarity and model capability.
 - **Cannot find an exported ZIP/PDF/Markdown:** read the save-complete toast, then check Android **Downloads**. Older Android versions may use the app's external files directory.
-- **APK update reports a signature conflict:** do not uninstall the stable app. Verify the new APK is from this repository, uses `com.mathreader.boox.codex`, and has the same independent signing certificate as previous Codex builds; keep a complete backup.
+- **APK update reports a signature conflict:** do not uninstall the stable app. Verify the new APK is from this repository, uses `com.mathreader.boox.codex`, and has the same independent signing certificate as previous builds from this repository; keep a complete backup.
 - **Brief BOOX ghosting or a delayed first stroke:** close panels covering the canvas, reselect the pen, or change pages once to refresh the native E Ink region.
 
-For unresolved problems, open an [Issue](https://github.com/none0enon/math-reader-boox-codex/issues) with the APK version, device/Android version, affected module, reproduction steps, and screenshots. Remove API keys, R2 secrets, and private content first.
+For unresolved problems, open an [Issue](https://github.com/none0enon/math-reader-codex/issues) with the APK version, device/Android version, affected module, reproduction steps, and screenshots. Remove API keys, R2 secrets, and private content first.
 
 ---
 
@@ -355,7 +355,7 @@ For unresolved problems, open an [Issue](https://github.com/none0enon/math-reade
 ```text
 ┌──────────────────────────────────────────────┐
 │ MainActivity (全屏 WebView)                   │
-│   ├── assets/www/  ← 当前 Math Reader 页面    │
+│   ├── assets/www/  ← 当前 math-reader-codex 页面 │
 │   ├── boox-pen.js  ← 页面加载后注入的适配器    │
 │   └── TouchHelper  ← Onyx 手写 SDK 直渲染层   │
 └──────────────────────────────────────────────┘
@@ -363,7 +363,7 @@ For unresolved problems, open an [Issue](https://github.com/none0enon/math-reade
 
 1. WebView 通过 `https://appassets.androidplatform.net` 同源加载打包在 assets 里的页面，localStorage / IndexedDB 正常持久化。
 2. 注入的 `boox-pen.js` 自动探测当前可手写画布，把可见区域交给原生 `TouchHelper` 做 EPD 低延迟直渲染。
-3. 抬笔后 SDK 回调整笔触点，适配器以合成 PointerEvent 回放给页面；绘制、撤销和保存逻辑仍由 Math Reader 管理。
+3. 抬笔后 SDK 回调整笔触点，适配器以合成 PointerEvent 回放给页面；绘制、撤销和保存逻辑仍由 math-reader-codex 管理。
 4. 页面切到橡皮等非书写工具时自动挂起直渲染，笔杆侧橡皮则映射回页面橡皮逻辑。
 5. APK 还桥接 WebView 文件选择、blob/data 下载、原生录音和外部链接。
 6. `BooxPenBridge` 记录手指/触控笔工具类型，并通过 `BooxPenNative.getLastToolType()` 暴露给页面。
@@ -379,7 +379,7 @@ For unresolved problems, open an [Issue](https://github.com/none0enon/math-reade
 
 ### 构建
 
-GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支的 `Sign APK` workflow 下载构建产物、核对独立包名和版本，并使用本仓库专用长期密钥签名。可在 **Actions → Sign APK → Artifacts** 获取 `math-reader-boox-codex-1.0.2-ci.*`。
+GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支的 `Sign APK` workflow 下载构建产物、核对独立包名和版本，并使用本仓库专用长期密钥签名。可在 **Actions → Sign APK → Artifacts** 获取 `math-reader-codex-1.0.2-ci.*`。
 
 `versionCode` 随 `Build APK` workflow run 自动递增，版本号基数保存在仓库变量 `APK_VERSION_CODE_BASE`。不要降低该变量；重建 workflow 导致 run number 重新计数时，应先提高基数。
 
@@ -390,7 +390,7 @@ GitHub Actions 在同仓库 PR 和 `main` 更新后自动构建。默认分支�
 # app/build/outputs/apk/debug/app-debug.apk
 ```
 
-稳定版和历史测试包不需要卸载。实验版使用独立数据目录；迁移资料请通过自行保管的完整 ZIP，避免使用与稳定版相同的云同步目标造成混写。CI 签名密钥不得删除或替换，否则无法继续覆盖更新已安装 Codex APK。
+稳定版和历史测试包不需要卸载。本仓库 APK 使用独立数据目录；迁移资料请通过自行保管的完整 ZIP，避免使用与稳定版相同的云同步目标造成混写。CI 签名密钥不得删除或替换，否则无法继续覆盖更新已安装的本仓库 APK。
 
 ### 同步上游 Math Reader
 
@@ -419,4 +419,4 @@ cp ../math-reader/{manifest.json,sw.js,icon-infinity-white.svg} \
 - `app/src/main/java/com/mathreader/boox/MainActivity.java` — WebView 壳、文件选择、下载、录音与触控笔工具类型上报
 - `app/src/main/java/com/mathreader/boox/BooxPenBridge.java` — `TouchHelper` 封装和 JS 桥
 - `app/src/main/assets/boox-pen.js` — 画布探测、原生笔迹回放和触控笔检测
-- `app/src/main/assets/www/` — 当前 Math Reader 页面资源
+- `app/src/main/assets/www/` — 当前 math-reader-codex 页面资源

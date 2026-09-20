@@ -1,6 +1,6 @@
 # Personal Codex gateway / 个人 Codex 网关
 
-Math Reader can use your own ChatGPT subscription for mathematics while keeping Gemini for audio. The gateway runs on your Mac, Linux PC or private Linux server; the BOOX APK and the GitHub Pages PWA keep their existing build and release workflows. On Windows, use WSL; native Windows execution is not validated.
+math-reader-codex can use your own ChatGPT subscription for mathematics while keeping Gemini for audio. The gateway runs on your Mac, Linux PC or private Linux server; the BOOX APK and the GitHub Pages PWA keep their existing build and release workflows. On Windows, use WSL; native Windows execution is not validated.
 
 启用后，数学问答、套索/手写识别、习题批改、Quiz、大纲、讲义和摘要交给 Codex；录音转写和音频纪要仍使用应用原有的 Gemini 配置。关闭 Codex 开关后恢复原来的主/备 API 路由。
 
@@ -23,7 +23,7 @@ Codex model computation still runs through OpenAI's services and consumes the su
 - A ChatGPT account with Codex access. No OpenAI Platform API key is used.
 - A private HTTPS route from the BOOX/PWA to the gateway host.
 
-Install JavaScript dependencies from this directory with `npm ci`. This includes the independent official Codex CLI; the gateway does not depend on a running Codex desktop app. The PDF renderer is included through `pdfjs-dist` and `@napi-rs/canvas`; it does not need Python, Poppler or an external OCR service.
+Install JavaScript dependencies from this directory with `npm ci`. This includes the standalone official Codex CLI; the gateway does not depend on a running Codex desktop app. The PDF renderer is included through `pdfjs-dist` and `@napi-rs/canvas`; it does not need Python, Poppler or an external OCR service.
 
 ## Start the gateway
 
@@ -39,7 +39,7 @@ npm start
 
 `login` prints the official ChatGPT device-login URL and a short-lived code. Complete the login yourself in the browser. The gateway checks that the resulting account uses ChatGPT authentication. It will reject an API-key account instead of silently spending API credit.
 
-`setup` creates a random access token and prints the token file's path, without printing its value. Copy the contents of that file into Math Reader's **Gateway token** field. The default token file is `gateway/.state/gateway-token`; ChatGPT login is stored separately inside `gateway/.state/codex-home`. Both are excluded from Git. Keep this directory private and out of cloud backups or shared ZIPs.
+`setup` creates a random access token and prints the token file's path, without printing its value. Copy the contents of that file into math-reader-codex's **Gateway token** field. The default token file is `gateway/.state/gateway-token`; ChatGPT login is stored separately inside `gateway/.state/codex-home`. Both are excluded from Git. Keep this directory private and out of cloud backups or shared ZIPs.
 
 By default, `start` listens on `http://127.0.0.1:4747`. Keep it running while using AI. Set these environment variables before running a command when you need a different configuration:
 
@@ -73,11 +73,11 @@ The app's gateway URL must be the base address, such as `https://math-reader.you
 
 4. If Tailscale asks to enable HTTPS, follow its official confirmation link. Enter the resulting `https://…ts.net` base URL in the app, together with the separate gateway token. Keep that token out of GitHub, URLs and screenshots.
 5. Use **Serve**, not **Funnel**: Serve is reachable within the private network; Funnel publishes a service to the Internet. Do not configure an exit node, subnet routes, or public port forwarding for this gateway.
-6. If the browser asks for local-network access, allow it for the experimental site. The gateway supports allowlisted PNA preflights for older browsers, but that does not replace modern browser permission prompts or bearer authentication.
+6. If the browser asks for local-network access, allow it for the math-reader-codex site. The gateway supports allowlisted PNA preflights for older browsers, but that does not replace modern browser permission prompts or bearer authentication.
 
 The Mac must remain awake, Tailscale connected, and the gateway process running. `serve --bg` does not start Node or prevent Mac sleep. Test **Test connection** from the actual BOOX; a successful request on the Mac does not establish BOOX connectivity. See [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) and [Chrome local-network permissions](https://developer.chrome.com/blog/local-network-access).
 
-## Configure Math Reader
+## Configure math-reader-codex
 
 1. Open **Settings → API Setting**.
 2. Keep a working Gemini endpoint, key and audio-capable model in the existing Primary or Backup API settings.
@@ -95,7 +95,7 @@ A request accepts up to 64 MiB of PDF bytes, 48 pages, and 400,000 extracted tex
 
 The 48-page limit applies to each request, not to an entire book. Outline generation can split automatically; other calls such as an unusually long single chapter or paper currently require a smaller page range/document. Image limits and model context limits may be reached earlier.
 
-## Security boundary and experimental status
+## Security boundary and API status
 
 This is a single-user integration for your own trusted devices, not a public multi-tenant inference service. Run it under a dedicated OS account or container with access only to the gateway state and temporary inputs. The isolated `CODEX_HOME` and child environment separate credentials and configuration, but they are not an operating-system filesystem boundary.
 
@@ -103,7 +103,7 @@ The gateway disables known Codex tool features, explicitly disables `tools.exper
 
 Account allowance, device-code login availability, and supported model options depend on the user's ChatGPT account. The automated tests use local fakes; they do not establish subscription access, real model quality, remote HTTPS reachability, or BOOX compatibility. Those require the real-device acceptance checks above.
 
-On 2026-09-20, the independent gateway was also validated on a Mac using a real ChatGPT login (no OpenAI API key): text mathematics, a triangle image, a PDF-based lecture, and JSON grading all returned correct sample answers with `gpt-6-astra`. These small acceptance samples are not a general accuracy guarantee; BOOX networking and real Gemini audio remain separate checks.
+On 2026-09-20, the gateway was also validated on a Mac using a real ChatGPT login (no OpenAI API key): text mathematics, a triangle image, a PDF-based lecture, and JSON grading all returned correct sample answers with `gpt-6-astra`. These small acceptance samples are not a general accuracy guarantee; BOOX networking and real Gemini audio remain separate checks.
 
 ## HTTP interface
 

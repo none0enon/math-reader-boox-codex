@@ -2,13 +2,13 @@
 // 更新 index.html 后立即生效，无需手动清缓存。
 
 // Cache Storage is shared by every GitHub Pages app on the same origin.
-// Only this experiment's namespace may ever be removed here.
+// Only this application's namespace may ever be removed here.
 const CACHE_NAMESPACE_PREFIX = 'math-reader-boox-codex:v1:cache:';
 
 // 安装时跳过等待，立即激活
 self.addEventListener('install', () => self.skipWaiting());
 
-// 激活时仅清除本实验版自己的旧缓存，然后接管页面
+// 激活时仅清除本应用自己的旧缓存，然后接管页面
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(

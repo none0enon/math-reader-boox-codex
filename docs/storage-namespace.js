@@ -13,7 +13,7 @@
 
     // This prefix is intentionally unrelated to the stable app's historical
     // keys. Never add fallback reads or automatic migration from unprefixed
-    // storage: the Codex experiment must start with a clean local data set.
+    // storage: this independent installation starts with a clean local data set.
     const STORAGE_PREFIX = 'math-reader-boox-codex:v1:';
     const INDEXED_DB_PREFIX = STORAGE_PREFIX + 'indexeddb:';
     const CACHE_PREFIX = STORAGE_PREFIX + 'cache:';
