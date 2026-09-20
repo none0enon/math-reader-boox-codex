@@ -1,0 +1,46 @@
+name: Test Codex gateway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gateway/**'
+      - 'frontend-tests/**'
+      - 'app/src/main/assets/www/**'
+      - 'docs/**'
+      - '.github/workflows/test-codex-gateway.yml'
+  pull_request:
+    paths:
+      - 'gateway/**'
+      - 'frontend-tests/**'
+      - 'app/src/main/assets/www/**'
+      - 'docs/**'
+      - '.github/workflows/test-codex-gateway.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: gateway/package-lock.json
+      - name: Install gateway dependencies
+        working-directory: gateway
+        run: npm ci
+      - name: Test request routing, PDF rendering, authentication and gateway lifecycle
+        working-directory: gateway
+        run: npm test
+      - name: Test PWA and APK Codex routing
+        run: node --test frontend-tests/*.test.mjs
+      - name: Verify shared assets
+        run: |
+          cmp app/src/main/assets/www/index.html docs/index.html
+          cmp app/src/main/assets/www/codex-gateway.js docs/codex-gateway.js
+          cmp app/src/main/assets/www/sw.js docs/sw.js

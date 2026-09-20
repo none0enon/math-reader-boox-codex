@@ -9,3 +9,10 @@ captures/
 *.apk
 *.aab
 *.keystore
+
+# Personal gateway dependencies, credentials and request files.
+gateway/node_modules/
+gateway/.state/
+gateway/.env
+gateway/.env.*
+!gateway/.env.example

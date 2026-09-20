@@ -3448,6 +3448,52 @@
             margin-top: 8px;
         }
 
+        .codex-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .codex-toggle-row .toggle-switch {
+            flex: 0 0 auto;
+            border: 0;
+            padding: 0;
+        }
+
+        .codex-gateway-hint {
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .codex-gateway-fields {
+            display: none;
+        }
+
+        .codex-gateway-fields.enabled {
+            display: block;
+        }
+
+        .codex-gateway-status {
+            display: none;
+            padding: 10px 12px;
+            margin: 8px 0 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            font-size: 12px;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .codex-gateway-status.show { display: block; }
+        .codex-gateway-status.success { border-color: #2f855a; color: #2f855a; }
+        .codex-gateway-status.error { border-color: #c53030; color: #c53030; }
+
         /* 草稿面板小条 - 固定在page2底部导航栏上方 */
         .draft-mini-bar {
             position: fixed;
@@ -5936,6 +5982,55 @@
                 <span class="modal-title" data-i18n="modal_api_setting">API Setting</span>
                 <button class="modal-close" onclick="hideModal('apiModal')">&times;</button>
             </div>
+
+            <div class="api-section-title" data-i18n="codex_gateway_title">Codex Gateway</div>
+            <div class="codex-toggle-row">
+                <div>
+                    <div class="form-label" style="margin-bottom:2px;" data-i18n="codex_enable">启用 Codex</div>
+                    <div class="codex-gateway-hint" style="margin-bottom:0;" data-i18n="codex_enable_desc">非音频 AI 请求将只使用 Codex Gateway</div>
+                </div>
+                <div class="toggle-switch" id="codexEnabledToggle" role="switch" tabindex="0"
+                    onclick="toggleCodexGatewayEnabled()"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCodexGatewayEnabled();}"
+                    aria-checked="false" data-i18n="codex_enable" data-i18n-attr="aria-label">
+                    <div class="toggle-thumb"></div>
+                </div>
+            </div>
+            <div class="codex-gateway-fields" id="codexGatewayFields">
+                <div class="form-group">
+                    <label class="form-label" for="codexGatewayUrl" data-i18n="codex_gateway_url">Gateway URL</label>
+                    <input type="url" class="form-input" id="codexGatewayUrl"
+                        placeholder="https://codex-gateway.example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="codexGatewayToken" data-i18n="codex_gateway_token">Gateway Token</label>
+                    <input type="password" class="form-input" id="codexGatewayToken"
+                        placeholder="gateway-token" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="codexModel" data-i18n="codex_model">Codex 模型</label>
+                    <div class="model-input-row">
+                        <input type="text" class="form-input" id="codexModel" placeholder="gateway-default"
+                            onchange="syncCodexReasoningEfforts()">
+                        <button type="button" class="fetch-models-btn" onclick="fetchCodexModels()"
+                            data-i18n="fetch_models">拉取模型</button>
+                    </div>
+                    <select class="form-select model-select" id="codexModelSelect"
+                        style="display:none;margin-top:8px;" onchange="selectCodexModel()"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="codexReasoningEffort" data-i18n="codex_reasoning_effort">推理强度</label>
+                    <select class="form-select" id="codexReasoningEffort">
+                        <option value="" data-i18n="codex_reasoning_default">使用 Gateway 默认值</option>
+                    </select>
+                </div>
+                <div class="codex-gateway-status" id="codexGatewayStatus" role="status" aria-live="polite"></div>
+                <button type="button" class="fetch-models-btn" style="width:100%;margin-bottom:4px;"
+                    onclick="testCodexGatewayConnection()" data-i18n="codex_test_connection">测试 Codex Gateway</button>
+            </div>
+            <div class="codex-gateway-hint" data-i18n="codex_gateway_scope_note">关闭时沿用下方主/备用 API；开启时下方 Gemini 配置仅用于音频。</div>
+
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 20px 0;">
             
             <div class="api-section-title" data-i18n="primary_api">主要 API</div>
             <div class="form-group">
@@ -6439,6 +6534,7 @@
     <script src="recording-storage.js"></script>
     <script src="classroom-storage.js"></script>
     <script src="recording-ai.js"></script>
+    <script src="codex-gateway.js"></script>
     <script>
         // ==================== Data Store ====================
         let appData = {
@@ -6462,6 +6558,11 @@
                 reviews: []    // [{ id, notebookId, pageId, createdAt, updatedAt, stage, dueAt, status, extra, extraFlags, quizzes: [{stage, content, generatedAt, dueAt, completedAt, extra}] }]
             },
             settings: {
+                codexEnabled: false,
+                codexGatewayUrl: '',
+                codexGatewayToken: '',
+                codexModel: '',
+                codexReasoningEffort: '',
                 supabaseUrl: '',
                 supabaseKey: '',
                 mathpixAppId: '',
@@ -7105,6 +7206,48 @@
             backup_file_too_large:'Le fichier de sauvegarde est trop volumineux', compressed_zip_unsupported:'Les entrées ZIP compressées ne sont pas prises en charge', zip_descriptor_unsupported:'Les descripteurs de données ZIP ne sont pas pris en charge', recording_backup_source_size_invalid:'Taille de source de sauvegarde invalide : {0}', recording_backup_manifest_invalid:'Manifeste de sauvegarde invalide : {0}', recording_backup_chunk_missing:"Le segment {1} de l’enregistrement {0} manque dans la sauvegarde", recording_backup_length_failed:'Échec de vérification de la longueur de la sauvegarde : {0}', unknown_recording_backup_source:'Source de sauvegarde inconnue : {0}', legacy_recording_missing:'Ancien enregistrement manquant : {0}', recording_backup_chunk_length_failed:'Échec de vérification de la longueur du segment : {0}', recording_backup_chunk_missing_simple:'Segment de sauvegarde manquant : {0}', recording_has_no_backup_data:"L’enregistrement ne contient aucune donnée à sauvegarder : {0}", stop_recording_before_backup:"Arrêtez l’enregistrement avant de créer une sauvegarde", packing_zip_backup:'Création de la sauvegarde ZIP…', recording_added_during_export:'Enregistrement ajouté pendant l’exportation',
             export_local_files_detail:' ({0} fichiers locaux inclus)', export_missing_recordings_detail:' ({0} enregistrements supplémentaires inclus)', export_failed:"Échec de l’exportation : ", confirm_import_zip_overwrite:'Importer cette sauvegarde ZIP remplacera les données actuelles. Continuer ?', parsing_zip_backup:'Analyse de la sauvegarde ZIP…', backup_missing_metadata:'metadata.json manque dans la sauvegarde', missing_recordings_manifest_invalid:'Le manifeste des enregistrements supplémentaires est invalide', missing_recordings_manifest_invalid_id:'Le manifeste contient un identifiant invalide', recording_backup_index_invalid:"L’index de sauvegarde des enregistrements est invalide", recording_backup_chunk_invalid:'Le segment {1} de l’enregistrement {0} est invalide', import_complete_files:'Importation terminée : {0} fichiers restaurés', import_failed:"Échec de l’importation : ",
             indexeddb_unavailable:'IndexedDB est indisponible', transaction_aborted:'Transaction interrompue : {0}', unknown_reason:'Raison inconnue', recording_transaction_failed:"Échec de la transaction d’enregistrement", recording_transaction_aborted:"La transaction d’enregistrement a été interrompue", class_file_transaction_failed:'Échec de la transaction du fichier de cours', class_file_transaction_aborted:'La transaction du fichier de cours a été interrompue', recording_storage_module_not_loaded:"Le module de stockage des enregistrements n’est pas chargé", class_lecture_content_empty:'Le contenu du cours est vide', data_structure_corrupt:'Structure de données corrompue : books/papers doivent être des tableaux'
+        });
+        Object.assign(I18N.zh, {
+            codex_gateway_title:'个人 Codex Gateway', codex_enable:'启用 Codex',
+            codex_enable_desc:'非音频 AI 请求将只使用 Codex Gateway',
+            codex_gateway_url:'Gateway URL', codex_gateway_token:'Gateway 访问令牌', codex_model:'Codex 模型',
+            codex_reasoning_effort:'推理强度', codex_reasoning_default:'使用 Gateway 默认值',
+            codex_test_connection:'测试 Codex Gateway',
+            codex_gateway_scope_note:'关闭时沿用下方主/备用 API；开启时下方 Gemini 配置仅用于音频。',
+            codex_status_checking:'正在检查 Codex Gateway…',
+            codex_status_ready:'Gateway 已就绪 · 登录：{0}', codex_status_not_ready:'Gateway 未就绪 · 登录：{0}',
+            codex_auth_chatgpt:'ChatGPT', codex_auth_none:'未登录',
+            codex_models_loaded:'已加载 {0} 个 Codex 模型',
+            codex_gateway_module_missing:'Codex Gateway 前端模块未加载',
+            codex_audio_requires_gemini:'Codex 已启用，但音频仍需要在主或备用 API 中配置 Gemini。'
+        });
+        Object.assign(I18N.en, {
+            codex_gateway_title:'Personal Codex Gateway', codex_enable:'Enable Codex',
+            codex_enable_desc:'Route every non-audio AI request only through Codex Gateway',
+            codex_gateway_url:'Gateway URL', codex_gateway_token:'Gateway token', codex_model:'Codex model',
+            codex_reasoning_effort:'Reasoning effort', codex_reasoning_default:'Use Gateway default',
+            codex_test_connection:'Test Codex Gateway',
+            codex_gateway_scope_note:'When disabled, the primary/backup APIs below are used. When enabled, their Gemini configuration is kept only for audio.',
+            codex_status_checking:'Checking Codex Gateway…',
+            codex_status_ready:'Gateway ready · Sign-in: {0}', codex_status_not_ready:'Gateway not ready · Sign-in: {0}',
+            codex_auth_chatgpt:'ChatGPT', codex_auth_none:'Not signed in',
+            codex_models_loaded:'Loaded {0} Codex models',
+            codex_gateway_module_missing:'The Codex Gateway frontend module is not loaded',
+            codex_audio_requires_gemini:'Codex is enabled, but audio still requires Gemini in the primary or backup API settings.'
+        });
+        Object.assign(I18N.fr, {
+            codex_gateway_title:'Passerelle Codex personnelle', codex_enable:'Activer Codex',
+            codex_enable_desc:'Acheminer toutes les requêtes IA sans audio uniquement via la passerelle Codex',
+            codex_gateway_url:'URL de la passerelle', codex_gateway_token:"Jeton d’accès de la passerelle", codex_model:'Modèle Codex',
+            codex_reasoning_effort:'Niveau de raisonnement', codex_reasoning_default:'Utiliser la valeur par défaut de la passerelle',
+            codex_test_connection:'Tester la passerelle Codex',
+            codex_gateway_scope_note:'Si cette option est désactivée, les API principale/de secours ci-dessous sont utilisées. Si elle est activée, leur configuration Gemini est conservée uniquement pour l’audio.',
+            codex_status_checking:'Vérification de la passerelle Codex…',
+            codex_status_ready:'Passerelle prête · Connexion : {0}', codex_status_not_ready:'Passerelle non prête · Connexion : {0}',
+            codex_auth_chatgpt:'ChatGPT', codex_auth_none:'Non connecté',
+            codex_models_loaded:'{0} modèles Codex chargés',
+            codex_gateway_module_missing:"Le module frontal de la passerelle Codex n’est pas chargé",
+            codex_audio_requires_gemini:"Codex est activé, mais l’audio nécessite toujours Gemini dans les réglages de l’API principale ou de secours."
         });
         Object.assign(I18N.zh, {
             back:'返回', new:'新建', skip:'跳过', discard:'丢弃', edit:'编辑', rename:'重命名', grade_all:'全部评分', export_assignment:'导出作业', correct:'正确', incorrect:'不正确', answer:'作答', completed:'已完成', deleted:'已删除', unknown:'未知',
@@ -12453,9 +12596,157 @@
         }
         
         // ==================== API Modal (照抄index.html) ====================
+        const CODEX_DEFAULT_REASONING_EFFORTS = [
+            'none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultra'
+        ];
+        let codexGatewayModels = [];
+
+        function isPackagedAndroidRuntime() {
+            return window.location?.hostname === 'appassets.androidplatform.net' ||
+                typeof window.BooxPenNative !== 'undefined' ||
+                typeof window.BooxRecordingNative !== 'undefined';
+        }
+
+        function setCodexGatewayEnabledUi(enabled) {
+            const toggle = document.getElementById('codexEnabledToggle');
+            const fields = document.getElementById('codexGatewayFields');
+            if (toggle) {
+                toggle.classList.toggle('on', !!enabled);
+                toggle.setAttribute('aria-checked', enabled ? 'true' : 'false');
+            }
+            if (fields) fields.classList.toggle('enabled', !!enabled);
+        }
+
+        function toggleCodexGatewayEnabled() {
+            const toggle = document.getElementById('codexEnabledToggle');
+            setCodexGatewayEnabledUi(!toggle?.classList.contains('on'));
+        }
+
+        function setCodexGatewayStatus(message, kind) {
+            const status = document.getElementById('codexGatewayStatus');
+            if (!status) return;
+            status.textContent = String(message || '');
+            status.className = 'codex-gateway-status' + (message ? ' show' : '') +
+                (kind ? ' ' + kind : '');
+        }
+
+        function codexGatewayModule() {
+            if (!window.CodexGateway) throw new Error(i18n('codex_gateway_module_missing'));
+            return window.CodexGateway;
+        }
+
+        function codexGatewayFormConfig() {
+            return {
+                baseUrl: document.getElementById('codexGatewayUrl').value.trim(),
+                token: document.getElementById('codexGatewayToken').value.trim(),
+                requireHttps: isPackagedAndroidRuntime()
+            };
+        }
+
+        function codexGatewaySettingsConfig(settings) {
+            const source = settings || appData.settings || {};
+            return {
+                baseUrl: String(source.codexGatewayUrl || '').trim(),
+                token: String(source.codexGatewayToken || '').trim(),
+                requireHttps: isPackagedAndroidRuntime()
+            };
+        }
+
+        function updateCodexReasoningEfforts(supported, selectedValue) {
+            const select = document.getElementById('codexReasoningEffort');
+            if (!select) return;
+            const selected = selectedValue !== undefined ? String(selectedValue || '') : select.value;
+            const efforts = Array.isArray(supported) && supported.length
+                ? supported.map(String).filter(Boolean)
+                : CODEX_DEFAULT_REASONING_EFFORTS.slice();
+            if (selected && !efforts.includes(selected)) efforts.push(selected);
+            select.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = i18n('codex_reasoning_default');
+            select.appendChild(defaultOption);
+            efforts.forEach(effort => {
+                const option = document.createElement('option');
+                option.value = effort;
+                option.textContent = effort;
+                select.appendChild(option);
+            });
+            select.value = selected;
+        }
+
+        function syncCodexReasoningEfforts() {
+            const modelId = document.getElementById('codexModel')?.value.trim() || '';
+            const model = codexGatewayModels.find(item => item.id === modelId);
+            updateCodexReasoningEfforts(model?.reasoningEfforts);
+        }
+
+        function selectCodexModel() {
+            const select = document.getElementById('codexModelSelect');
+            const input = document.getElementById('codexModel');
+            if (select?.value && input) input.value = select.value;
+            syncCodexReasoningEfforts();
+        }
+
+        async function fetchCodexModels() {
+            try {
+                setCodexGatewayStatus(i18n('codex_status_checking'));
+                codexGatewayModels = await codexGatewayModule().listModels(codexGatewayFormConfig());
+                const select = document.getElementById('codexModelSelect');
+                select.innerHTML = '';
+                const promptOption = document.createElement('option');
+                promptOption.value = '';
+                promptOption.textContent = i18n('select_model');
+                select.appendChild(promptOption);
+                codexGatewayModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.id;
+                    option.textContent = model.name && model.name !== model.id
+                        ? model.name + ' (' + model.id + ')'
+                        : model.id;
+                    select.appendChild(option);
+                });
+                const currentModel = document.getElementById('codexModel').value.trim();
+                if (codexGatewayModels.some(model => model.id === currentModel)) {
+                    select.value = currentModel;
+                }
+                select.style.display = codexGatewayModels.length ? 'block' : 'none';
+                syncCodexReasoningEfforts();
+                setCodexGatewayStatus(i18n('codex_models_loaded', codexGatewayModels.length), 'success');
+                showToast(i18n('codex_models_loaded', codexGatewayModels.length));
+            } catch (error) {
+                setCodexGatewayStatus(error.message || String(error), 'error');
+                showToast(i18n('toast_fetch_models_failed') + (error.message || error));
+            }
+        }
+
+        async function testCodexGatewayConnection() {
+            try {
+                setCodexGatewayStatus(i18n('codex_status_checking'));
+                const status = await codexGatewayModule().getStatus(codexGatewayFormConfig());
+                const authType = status?.auth?.type === 'chatgpt' ? 'chatgpt' : 'none';
+                const authLabel = i18n(authType === 'chatgpt' ? 'codex_auth_chatgpt' : 'codex_auth_none');
+                const ready = status?.ready === true;
+                setCodexGatewayStatus(
+                    i18n(ready ? 'codex_status_ready' : 'codex_status_not_ready', authLabel),
+                    ready ? 'success' : 'error'
+                );
+                showToast(i18n(ready ? 'toast_connection_success' : 'toast_connection_failed') +
+                    (ready ? '' : i18n('codex_status_not_ready', authLabel)));
+            } catch (error) {
+                setCodexGatewayStatus(error.message || String(error), 'error');
+                showToast(i18n('toast_connection_failed') + (error.message || error));
+            }
+        }
+
         function showAPIModal() {
             // 加载当前设置到modal
             const s = appData.settings;
+            document.getElementById('codexGatewayUrl').value = s.codexGatewayUrl || '';
+            document.getElementById('codexGatewayToken').value = s.codexGatewayToken || '';
+            document.getElementById('codexModel').value = s.codexModel || '';
+            setCodexGatewayEnabledUi(!!s.codexEnabled);
+            updateCodexReasoningEfforts(null, s.codexReasoningEffort || '');
+            setCodexGatewayStatus('');
             document.getElementById('modalAiApiUrl').value = s.aiApiUrl || '';
             document.getElementById('modalAiApiKey').value = s.aiApiKey || '';
             document.getElementById('modalAiModel').value = s.aiModel || '';
@@ -12472,6 +12763,28 @@
         }
         
         function saveAPISettings() {
+            const codexEnabled = document.getElementById('codexEnabledToggle').classList.contains('on');
+            const codexConfig = codexGatewayFormConfig();
+            if (codexEnabled) {
+                try {
+                    codexConfig.baseUrl = codexGatewayModule().normalizeBaseUrl(codexConfig.baseUrl, {
+                        requireHttps: codexConfig.requireHttps
+                    });
+                    if (!codexConfig.token) {
+                        throw codexGatewayModule().gatewayError(
+                            'codex_gateway_token_required', 'Codex Gateway token is required');
+                    }
+                } catch (error) {
+                    setCodexGatewayStatus(error.message || String(error), 'error');
+                    showToast(error.message || String(error));
+                    return;
+                }
+            }
+            appData.settings.codexEnabled = codexEnabled;
+            appData.settings.codexGatewayUrl = codexConfig.baseUrl;
+            appData.settings.codexGatewayToken = codexConfig.token;
+            appData.settings.codexModel = document.getElementById('codexModel').value.trim();
+            appData.settings.codexReasoningEffort = document.getElementById('codexReasoningEffort').value;
             appData.settings.apiProvider = document.getElementById('apiProvider').value;
             appData.settings.aiApiUrl = document.getElementById('modalAiApiUrl').value;
             appData.settings.aiApiKey = document.getElementById('modalAiApiKey').value;
@@ -12538,6 +12851,10 @@
         }
 
         function _configuredGeminiRecordingConfig() {
+            return _configuredGeminiRecordingConfigs()[0] || null;
+        }
+
+        function _configuredGeminiRecordingConfigs() {
             const settings = appData.settings || {};
             const candidates = [{
                 url: settings.aiApiUrl,
@@ -12550,8 +12867,8 @@
                 model: settings.backupModel,
                 provider: settings.backupProvider || ''
             }];
-            return candidates.find(config => config.url && config.key && config.model &&
-                (isGeminiUrl(config.url) || config.provider === 'custom')) || null;
+            return candidates.filter(config => config.url && config.key && config.model &&
+                (isGeminiUrl(config.url) || config.provider === 'custom'));
         }
 
         async function fetchModels(type) {
@@ -16078,6 +16395,8 @@
 
         // API 相关设置只保存在本地，不上传云端；云端恢复时也不覆盖本地 API 配置
         const API_LOCAL_ONLY_KEYS = [
+            'codexEnabled', 'codexGatewayUrl', 'codexGatewayToken',
+            'codexModel', 'codexReasoningEffort',
             'apiProvider', 'aiApiUrl', 'aiApiKey', 'aiModel',
             'backupProvider', 'backupUrl', 'backupKey', 'backupModel',
             'supabaseUrl', 'supabaseKey',
@@ -18992,6 +19311,15 @@
         // ==================== 通用AI调用 ====================
         async function callAI(systemPrompt, messages, options = {}) {
             const s = appData.settings;
+
+            // Codex Gateway 是独立开关：非音频请求只走 Codex，不静默回退到其他模型；
+            // 音频继续严格使用主/备用设置中的 Gemini 配置。
+            if (s.codexEnabled) {
+                if (codexGatewayModule().hasAudioContent(messages)) {
+                    return await doConfiguredGeminiAudioRequest(systemPrompt, messages, options);
+                }
+                return await doCodexGatewayRequest(systemPrompt, messages, options);
+            }
             
             // 主API配置
             const primaryConfig = {
@@ -19037,6 +19365,38 @@
             }
             
             throw new Error(i18n('configure_api_first'));
+        }
+
+        async function doCodexGatewayRequest(systemPrompt, messages, options = {}) {
+            const settings = appData.settings || {};
+            const result = await codexGatewayModule().ask(
+                codexGatewaySettingsConfig(settings),
+                {
+                    systemPrompt,
+                    messages,
+                    model: settings.codexModel || '',
+                    reasoningEffort: settings.codexReasoningEffort || '',
+                    pdfAttachment: options.pdfAttachment
+                },
+                { timeoutMs: codexGatewayModule().MAX_REQUEST_TIMEOUT_MS }
+            );
+            return result.text;
+        }
+
+        async function doConfiguredGeminiAudioRequest(systemPrompt, messages, options = {}) {
+            const configs = _configuredGeminiRecordingConfigs();
+            if (!configs.length) throw new Error(i18n('codex_audio_requires_gemini'));
+            let lastError = null;
+            for (let index = 0; index < configs.length; index++) {
+                try {
+                    return await doGeminiRequest(configs[index], systemPrompt, messages, options);
+                } catch (error) {
+                    lastError = error;
+                    console.error('Gemini 音频 API 调用失败:', error);
+                    if (index + 1 < configs.length) showToast(i18n('toast_primary_failed'));
+                }
+            }
+            throw lastError || new Error(i18n('codex_audio_requires_gemini'));
         }
         
         async function doAIRequest(config, systemPrompt, messages, options = {}) {
@@ -19643,7 +20003,10 @@
         }
 
         function isOutlineTokenLimitError(error) {
-            const message = String(error?.message || error || '');
+            const code = String(error?.code || '');
+            const status = Number(error?.status ?? error?.statusCode);
+            if (code === 'request_too_large' || status === 413) return true;
+            const message = code + ' ' + String(error?.message || error || '');
             return /input token count exceeds|maximum number of tokens allowed|context[_ ]length[_ ]exceeded|context window|too many (?:input )?tokens/i.test(message);
         }
 
@@ -19674,6 +20037,9 @@
             return [
                 pdfInfo.fingerprint || '', bytesLength, pdfInfo.totalPages || '',
                 OUTLINE_PDF_CHUNK_MAX_PAGES, currentLang,
+                settings.codexEnabled ? 'codex:on' : 'codex:off',
+                settings.codexGatewayUrl || '', settings.codexModel || '',
+                settings.codexReasoningEffort || '',
                 settings.apiProvider || '', settings.aiModel || '',
                 settings.backupProvider || '', settings.backupModel || ''
             ].join('|');

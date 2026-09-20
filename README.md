@@ -36,6 +36,8 @@ This repository ships the current Math Reader web app as an Android APK. BOOX/E 
 
 ### 2. 配置 AI
 
+**个人 ChatGPT 订阅模式（实验性）**：可在 API Setting 中启用 Codex 私有网关，让数学问答、图片/PDF、讲义和批改使用 Codex，音频继续使用 Gemini。无需 OpenAI API Key，但需要一台运行网关的电脑/私有服务器、独立 ChatGPT 登录和私有 HTTPS 连接；不是把后端托管在 Codex 桌面应用内。部署、限制与验证步骤见 [个人 Codex 网关](gateway/README.md)。默认关闭，不改变现有 API 设置或 APK/PWA 发布流程。
+
 进入 **设置 → API Setting**：
 
 1. 在 **Primary API** 选择 DeepSeek、OpenAI、Google、Claude 或 Custom。
@@ -223,6 +225,8 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 The bottom navigation is **Class, Library, Reader, Lectures, Notes, Exercise, Settings**. Recent documents, pages, notebook positions, and part of the exercise state are restored automatically.
 
 ### 2. Configure AI
+
+**Personal ChatGPT subscription mode (experimental):** enable the private Codex gateway in API Setting to route mathematics, images/PDFs, lectures and grading to Codex while retaining Gemini for audio. No OpenAI API key is used. A gateway host, separate ChatGPT login and private HTTPS connection are required; Codex desktop itself does not host the backend. See the [gateway setup and limitations](gateway/README.md). The option is off by default and preserves existing API settings and APK/PWA release workflows.
 
 Open **Settings → API Setting**:
 
