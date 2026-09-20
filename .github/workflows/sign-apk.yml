@@ -13,6 +13,7 @@ jobs:
   sign:
     if: >-
       ${{
+        vars.APK_SIGNING_CERT_SHA256 != '' &&
         github.event.workflow_run.conclusion == 'success' &&
         (
           (

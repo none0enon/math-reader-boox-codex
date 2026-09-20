@@ -1,10 +1,16 @@
-# Math Reader
+# Math Reader Codex (experimental)
+
+这是独立的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。当前新仓库为私有，尚未启用 Pages 或配置正式 APK 签名凭据。请在本仓库提交 Issue 和后续修改。
+
+This is an independent experimental repository for the personal ChatGPT-authenticated Codex gateway. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
+
+**安装提醒：** 目前继承的 Android 包名仍为 `com.mathreader.boox`，尚未分离为可与稳定版并存的应用；不要为安装实验版卸载稳定版。之前从旧仓库生成的签名测试 APK 也不是独立安装版。新的发布与 PWA 存储隔离需先完成配置和验证。
 
 Math Reader 是一个面向数学学习的本地优先工作台：把资料阅读、课堂记录、AI 讲义、手写笔记、间隔复习和习题训练放在同一个应用中。
 
 This repository ships the current Math Reader web app as an Android APK. BOOX/E Ink support is an additional platform adaptation: on supported BOOX devices, handwriting is connected to the Onyx pen SDK for lower latency, while the main product remains Math Reader itself.
 
-[中文使用说明](#中文使用说明) · [English User Guide](#english-user-guide) · [Releases](https://github.com/none0enon/math-reader-boox/releases) · [Issues](https://github.com/none0enon/math-reader-boox/issues)
+[中文使用说明](#中文使用说明) · [English User Guide](#english-user-guide) · [Releases](https://github.com/none0enon/math-reader-boox-codex/releases) · [Issues](https://github.com/none0enon/math-reader-boox-codex/issues)
 
 ## 当前功能
 
@@ -206,7 +212,7 @@ BOOX 是本仓库 Android 发行版的附加适配，不改变上述 Math Reader
 
 关闭遮挡画布的面板，重新选择画笔或切换一次页面。撤销、橡皮和工具切换后，E Ink 直渲染层与页面画布可能需要一次区域刷新。
 
-仍无法解决时，请提交 [Issue](https://github.com/none0enon/math-reader-boox/issues)，写明 APK 版本、设备/Android 版本、功能模块、复现步骤和截图；务必隐藏 API Key、R2 密钥和私人资料。
+仍无法解决时，请提交 [Issue](https://github.com/none0enon/math-reader-boox-codex/issues)，写明 APK 版本、设备/Android 版本、功能模块、复现步骤和截图；务必隐藏 API Key、R2 密钥和私人资料。
 
 ---
 
@@ -336,7 +342,7 @@ BOOX support is an additional Android adaptation, not a separate app workflow:
 - **APK update reports a signature conflict:** export and verify a full ZIP before uninstalling the old build and installing the stable signed APK.
 - **Brief BOOX ghosting or a delayed first stroke:** close panels covering the canvas, reselect the pen, or change pages once to refresh the native E Ink region.
 
-For unresolved problems, open an [Issue](https://github.com/none0enon/math-reader-boox/issues) with the APK version, device/Android version, affected module, reproduction steps, and screenshots. Remove API keys, R2 secrets, and private content first.
+For unresolved problems, open an [Issue](https://github.com/none0enon/math-reader-boox-codex/issues) with the APK version, device/Android version, affected module, reproduction steps, and screenshots. Remove API keys, R2 secrets, and private content first.
 
 ---
 
