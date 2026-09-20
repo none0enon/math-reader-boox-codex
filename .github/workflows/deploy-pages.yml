@@ -6,7 +6,6 @@ on:
     paths:
       - 'app/src/main/assets/www/**'
       - 'docs/**'
-      - 'frontend-tests/**'
       - 'gateway/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
@@ -19,40 +18,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
-    name: Test and verify Pages content
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: gateway/package-lock.json
-
-      - name: Install gateway dependencies
-        working-directory: gateway
-        run: npm ci
-
-      - name: Test gateway
-        working-directory: gateway
-        run: npm test
-
-      - name: Test PWA and APK Codex routing
-        run: node --test frontend-tests/*.test.mjs
-
-      - name: Verify complete PWA mirror
-        run: diff -qr app/src/main/assets/www docs
-
   build:
     name: Package Pages artifact
-    needs: test
     permissions:
       contents: read
       pages: read

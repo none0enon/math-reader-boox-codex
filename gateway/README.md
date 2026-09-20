@@ -115,12 +115,6 @@ All `/v1/` endpoints require `Authorization: Bearer <gateway-access-token>`.
 
 The request accepts `systemPrompt`, `messages`, optional `model` and `reasoningEffort`, and optional `pdfAttachment: { base64, name }`. Message content is a string or an array of `text` and inline `image_url` blocks. Audio is not accepted by this endpoint. Errors have the form `{ "error": { "code": "...", "message": "..." } }`.
 
-## Verification
-
-Run `npm test` in this directory and `node --test frontend-tests/*.test.mjs` from the repository root. These tests cover mocked protocol failures, actual PDF parsing/rendering, and the real pinned Codex CLI against a local simulated Responses service. The real-engine test checks a final text answer, image forwarding, an empty tool list and successful ephemeral-thread unloading. It supplies fake account/model metadata only inside the test; it does not spend subscription quota or prove that your account is logged in. Complete a real request through the configured gateway to verify account access and model behavior.
-
-The additional **Test Codex gateway** workflow runs these checks without credentials. **Build APK**, **Sign APK** and the `www/` → `docs/` publishing workflow retain their existing roles. Frontend assets must remain identical in the APK and PWA copies.
-
 ## Official references
 
 - [Codex App Server](https://learn.chatgpt.com/docs/app-server)

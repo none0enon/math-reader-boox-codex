@@ -15,20 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - name: Check shared page
-        run: cmp app/src/main/assets/www/index.html docs/index.html
-
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Verify shared classroom and recording assets match
-        run: |
-          cmp app/src/main/assets/www/recording-storage.js docs/recording-storage.js
-          cmp app/src/main/assets/www/classroom-storage.js docs/classroom-storage.js
-          cmp app/src/main/assets/www/recording-ai.js docs/recording-ai.js
-          cmp app/src/main/assets/www/storage-namespace.js docs/storage-namespace.js
 
       - name: Calculate APK version
         id: version

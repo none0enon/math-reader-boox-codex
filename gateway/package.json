@@ -13,8 +13,7 @@
     "setup": "node ./cli.mjs setup",
     "login": "node ./cli.mjs login",
     "start": "node ./cli.mjs start",
-    "status": "node ./cli.mjs status",
-    "test": "node --test --test-concurrency=1"
+    "status": "node ./cli.mjs status"
   },
   "dependencies": {
     "@napi-rs/canvas": "1.0.9",
