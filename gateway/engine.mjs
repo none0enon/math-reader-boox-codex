@@ -271,7 +271,7 @@ export class GatewayEngine {
           sandbox: 'read-only',
           approvalPolicy: 'never',
           personality: 'none',
-          serviceName: 'math-reader-boox-gateway',
+          serviceName: 'math-reader-codex',
           developerInstructions: buildDeveloperInstructions(request.systemPrompt),
           config: { web_search: 'disabled', features },
         },

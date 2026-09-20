@@ -113,8 +113,8 @@ export class CodexAppServer extends EventEmitter {
         'initialize',
         {
           clientInfo: {
-            name: 'math-reader-boox-gateway',
-            title: 'Math Reader private Codex gateway',
+            name: 'math-reader-codex',
+            title: 'math-reader-codex',
             version: '0.1.0',
           },
         },

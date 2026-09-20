@@ -145,11 +145,13 @@ test('all display names use exactly the user-specified project name', async () =
     ]);
     const manifest = JSON.parse(manifestText);
 
-    assert.doesNotMatch(index, /codex-experiment-badge|实验版|Codex Experiment|Expérience Codex/);
+    assert.doesNotMatch(index, /codex-experiment-badge|实验版|Codex Experiment|Expérience Codex|Math Reader|数学阅读 PWA|Lecteur de mathématiques/);
     assert.match(index, /<title data-i18n="app_title">math-reader-codex<\/title>/);
     assert.match(index, /name="apple-mobile-web-app-title" content="math-reader-codex"/);
     assert.deepEqual(Array.from(index.matchAll(/app_title:'([^']+)'/g), match => match[1]),
         ['math-reader-codex', 'math-reader-codex', 'math-reader-codex']);
+    assert.deepEqual(Array.from(index.matchAll(/version_info:'([^']+)'/g), match => match[1]),
+        ['math-reader-codex PWA v1.0', 'math-reader-codex PWA v1.0', 'math-reader-codex PWA v1.0']);
     assert.equal(manifest.name, 'math-reader-codex');
     assert.equal(manifest.short_name, 'math-reader-codex');
     assert.equal(manifest.description, '专注数学阅读与笔记');

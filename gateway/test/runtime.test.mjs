@@ -137,7 +137,7 @@ test('real engine completes a zero-tool multimodal turn and unloads it', { timeo
     '-c',
     'model_provider="math_reader_runtime_test"',
     '-c',
-    'model_providers.math_reader_runtime_test.name="Math Reader local runtime test"',
+    'model_providers.math_reader_runtime_test.name="math-reader-codex local runtime test"',
     '-c',
     `model_providers.math_reader_runtime_test.base_url="http://127.0.0.1:${providerAddress.port}/v1"`,
     '-c',
@@ -158,7 +158,7 @@ test('real engine completes a zero-tool multimodal turn and unloads it', { timeo
     {
       id: 'math-reader-zero-tool-probe',
       model: 'math-reader-zero-tool-probe',
-      displayName: 'Math Reader zero-tool probe',
+      displayName: 'math-reader-codex zero-tool probe',
       isDefault: true,
       hidden: false,
       inputModalities: ['text', 'image'],
