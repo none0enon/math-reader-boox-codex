@@ -7212,8 +7212,6 @@
             indexeddb_unavailable:'IndexedDB est indisponible', transaction_aborted:'Transaction interrompue : {0}', unknown_reason:'Raison inconnue', recording_transaction_failed:"Échec de la transaction d’enregistrement", recording_transaction_aborted:"La transaction d’enregistrement a été interrompue", class_file_transaction_failed:'Échec de la transaction du fichier de cours', class_file_transaction_aborted:'La transaction du fichier de cours a été interrompue', recording_storage_module_not_loaded:"Le module de stockage des enregistrements n’est pas chargé", class_lecture_content_empty:'Le contenu du cours est vide', data_structure_corrupt:'Structure de données corrompue : books/papers doivent être des tableaux'
         });
         Object.assign(I18N.zh, {
-            cloud_sync_local_only_blocked:'发现 {0} 个无法确认来源的本地独有条目，已阻止自动上传和删除；两端数据均保留。需要上传时，请手动选择“同步到云端”并确认。',
-            confirm_local_only_cloud_upload:'发现 {0} 个旧的或来源未确认的本地独有条目。确认将它们加入云端吗？云端独有书籍会保留。取消不会更改任何数据。',
             codex_gateway_title:'个人 Codex Gateway', codex_enable:'启用 Codex',
             codex_enable_desc:'非音频 AI 请求将只使用 Codex Gateway',
             codex_gateway_url:'Gateway URL', codex_gateway_token:'Gateway 访问令牌', codex_model:'Codex 模型',
@@ -7228,8 +7226,6 @@
             codex_audio_requires_gemini:'Codex 已启用，但音频仍需要在主或备用 API 中配置 Gemini。'
         });
         Object.assign(I18N.en, {
-            cloud_sync_local_only_blocked:'Found {0} unconfirmed local-only entries. Automatic upload and deletion were blocked; both copies are preserved. Use Sync to Cloud and confirm to upload them.',
-            confirm_local_only_cloud_upload:'Add {0} old or unconfirmed local-only entries to the cloud? Cloud-only books will be kept. Cancel leaves all data unchanged.',
             codex_gateway_title:'Personal Codex Gateway', codex_enable:'Enable Codex',
             codex_enable_desc:'Route every non-audio AI request only through Codex Gateway',
             codex_gateway_url:'Gateway URL', codex_gateway_token:'Gateway token', codex_model:'Codex model',
@@ -7244,8 +7240,6 @@
             codex_audio_requires_gemini:'Codex is enabled, but audio still requires Gemini in the primary or backup API settings.'
         });
         Object.assign(I18N.fr, {
-            cloud_sync_local_only_blocked:'{0} entrées locales non confirmées : envoi et suppression automatiques bloqués. Les deux copies sont conservées. Pour les envoyer, utilisez Synchroniser et confirmez.',
-            confirm_local_only_cloud_upload:'Ajouter {0} entrées locales anciennes ou non confirmées au cloud ? Les livres présents uniquement dans le cloud seront conservés. Annuler ne change rien.',
             codex_gateway_title:'Passerelle Codex personnelle', codex_enable:'Activer Codex',
             codex_enable_desc:'Acheminer toutes les requêtes IA sans audio uniquement via la passerelle Codex',
             codex_gateway_url:'URL de la passerelle', codex_gateway_token:"Jeton d’accès de la passerelle", codex_model:'Modèle Codex',
@@ -14234,15 +14228,17 @@
             r2SyncInProgress = true;
             
             try {
-                // 先检查本地独有条目；无法确认是新增时整轮停止，保留两端数据。
-                // 确认晚于云端快照的新条目仍沿用原有时间戳规则同步。
+                // 先拉取云端元数据，把"云端已经没有但本地还有"的书从本地删掉，
+                // 同时清掉 IndexedDB 里对应的 PDF 文件；
+                // 但本地 addedAt 晚于云端 syncedAt 的条目视为本地新加还没上传，保留，
+                // 并在合并后把这些新加书的 PDF 文件一起上传到云端。
+                // 阅读进度按时间戳合并保留较新的值。合并完再把结果写回云端。
                 let newlyAddedIds = [];
                 let newMatIds = [];
                 let newClassroomNoteIds = [];
                 let cloudExFileIds = new Set();
                 try {
                     const metadataStr = await r2GetObject('metadata.json');
-                    r2AssertAutomaticSyncSafe(metadataStr ? JSON.parse(metadataStr) : null);
                     if (metadataStr) {
                         const metadata = JSON.parse(metadataStr);
                         const localR2Config = appData.settings.r2Config;
@@ -14253,22 +14249,24 @@
                         const cloudPapers = metadata.papers || [];
                         const cloudSyncedAtMs = metadata.syncedAt ? Date.parse(metadata.syncedAt) : 0;
                         if ((cloudBooks.length + cloudPapers.length) === 0 && (localBooks.length + localPapers.length) > 0) {
-                            // 纵使前置检查将来被重构，这里也必须再次拒绝自动回传。
-                            const error = new Error(i18n('cloud_sync_local_only_blocked',
-                                localBooks.length + localPapers.length));
-                            error.code = 'R2_UNCONFIRMED_LOCAL_DATA';
-                            throw error;
+                            // 防护：云端书籍索引为空但本地有数据 → 疑似云端 metadata 被空数据覆盖。
+                            // 跳过删除与合并，保留本地数据；本轮随后会把本地索引回传，修复云端。
+                            console.warn('[auto-sync] 云端书籍索引为空但本地有 ' + (localBooks.length + localPapers.length) + ' 条，保留本地数据并回传云端');
                         } else {
                             const cloudIds = new Set([...cloudBooks, ...cloudPapers].map(d => d && d.id).filter(Boolean));
+                            const removedIds = [];
                             [...localBooks, ...localPapers].forEach(d => {
                                 if (!d || !d.id || cloudIds.has(d.id)) return;
                                 const addedAtMs = d.addedAt ? Date.parse(d.addedAt) : NaN;
                                 if (!isNaN(addedAtMs) && addedAtMs > cloudSyncedAtMs) {
                                     newlyAddedIds.push(d.id);
+                                } else {
+                                    removedIds.push(d.id);
                                 }
                             });
-                            // Ambiguous local-only entries were blocked above, before mutation.
-                            // Never garbage-collect a local PDF as a side effect of automatic sync.
+                            for (const id of removedIds) {
+                                try { await deleteFileData(id); } catch (e) { console.warn('deleteFileData failed for', id, e); }
+                            }
                             appData.books = mergeDocsPreferringLocalProgress(cloudBooks, localBooks, cloudSyncedAtMs);
                             appData.papers = mergeDocsPreferringLocalProgress(cloudPapers, localPapers, cloudSyncedAtMs);
                         }
@@ -14647,126 +14645,6 @@
             return Number.isFinite(parsed) ? parsed : 0;
         }
 
-        // Keep the upstream created-after-snapshot rule, but fail closed when a
-        // local-only entry might be an old backup or a deletion from another device.
-        // Do not resolve that ambiguity by uploading it OR deleting its local bytes.
-        function r2SyncInventory(metadata) {
-            const entries = new Map();
-            const list = value => {
-                if (value == null) return [];
-                if (!Array.isArray(value)) throw new Error(i18n('cloud_metadata_corrupt'));
-                return value;
-            };
-            const add = (key, item, timestamp) => {
-                if (item && key) entries.set(key, syncTimestamp(timestamp));
-            };
-            for (const kind of ['books', 'papers', 'archived']) {
-                for (const doc of list(metadata?.[kind])) {
-                    if (doc?.id) add(kind + '/' + doc.id, doc, doc.addedAt);
-                }
-            }
-            for (const [bookId, lecture] of Object.entries(metadata?.lectures || {})) {
-                add('lectures/' + bookId, lecture, lectureBookStructureTimestamp(lecture));
-                for (const chapter of list(lecture?.chapters)) {
-                    if (chapter?.id) add('lectures/' + bookId + '/' + chapter.id, chapter,
-                        lectureStructureTimestamp(chapter));
-                }
-            }
-            for (const kind of ['courses', 'seminars']) {
-                for (const folder of list(metadata?.classroom?.[kind])) {
-                    const path = 'classroom/' + kind + '/' + folder.id;
-                    add(path, folder, folder.createdAt);
-                    for (const session of list(folder.sessions)) {
-                        const sessionPath = path + '/' + session.id;
-                        add(sessionPath, session, session.createdAt || folder.createdAt);
-                        for (const material of list(session.sourceFolder)) {
-                            add(sessionPath + '/files/' + material.id, material,
-                                material.uploadedAt || material.createdAt || session.createdAt);
-                        }
-                        for (const note of list(session.notes)) {
-                            add(sessionPath + '/notes/' + note.id, note, note.generatedAt || note.createdAt);
-                        }
-                    }
-                }
-            }
-            for (const notebook of list(metadata?.notebooks?.items)) {
-                const path = 'notebooks/' + notebook.id;
-                add(path, notebook, notebook.createdAt);
-                for (const page of list(notebook.pages)) {
-                    add(path + '/' + page.id, page, page.createdAt);
-                }
-            }
-            for (const folder of list(metadata?.exercises?.folders)) {
-                const path = 'exercises/' + folder.id;
-                add(path, folder, folder.createdAt);
-                for (const task of list(folder.tasks)) {
-                    const taskPath = path + '/' + task.id;
-                    add(taskPath, task, task.createdAt || folder.createdAt);
-                    for (const file of list(task.sourceFiles)) {
-                        add(taskPath + '/' + file.id, file, file.createdAt || task.createdAt);
-                    }
-                }
-            }
-            return entries;
-        }
-
-        function r2UnconfirmedLocalEntries(remote, local = appData, options = {}) {
-            if (remote !== null && (typeof remote !== 'object' || Array.isArray(remote))) {
-                throw new Error(i18n('cloud_metadata_corrupt'));
-            }
-            const cloudEntries = r2SyncInventory(remote);
-            const baseline = syncTimestamp(remote?.syncedAt);
-            const confirmed = new Set(options.confirmedLocalEntries || []);
-            const cloudHasDocuments = [...cloudEntries.keys()].some(key =>
-                key.startsWith('books/') || key.startsWith('papers/'));
-            return [...r2SyncInventory(local)].filter(([key, createdAt]) => {
-                if (cloudEntries.has(key) || confirmed.has(key)) return false;
-                if (options.docUploadId &&
-                    (key === 'books/' + options.docUploadId || key === 'papers/' + options.docUploadId)) return false;
-                // An empty cloud library is never treated as permission to publish the
-                // entire local library. Only an exact upload action or manual confirmation
-                // may initialize it.
-                if (!cloudHasDocuments &&
-                    (key.startsWith('books/') || key.startsWith('papers/'))) return true;
-                // A missing/invalid remote timestamp cannot prove that old data is new.
-                return !baseline || !createdAt || createdAt <= baseline;
-            }).map(([key]) => key);
-        }
-
-        function r2AssertAutomaticSyncSafe(remote, local = appData, options = {}) {
-            const unconfirmed = r2UnconfirmedLocalEntries(remote, local, options);
-            if (unconfirmed.length) {
-                const error = new Error(i18n('cloud_sync_local_only_blocked', unconfirmed.length));
-                error.code = 'R2_UNCONFIRMED_LOCAL_DATA';
-                showToast(error.message);
-                throw error;
-            }
-        }
-
-        async function r2ReadSyncMetadata() {
-            const raw = await r2GetObject('metadata.json');
-            if (!raw) return null;
-            try {
-                const metadata = JSON.parse(raw);
-                if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) throw new Error();
-                r2SyncInventory(metadata);
-                return metadata;
-            } catch (_) {
-                throw new Error(i18n('cloud_metadata_corrupt'));
-            }
-        }
-
-        function r2DocsForPublication(remoteDocs, localDocs, deletedId) {
-            // The preflight has already authorized every local-only addition.
-            // Use the upstream field/progress merger without dropping cloud-only books.
-            const remote = remoteDocs || [];
-            const local = localDocs || [];
-            const remoteIds = new Set(remote.map(doc => doc.id));
-            const base = [...remote, ...local.filter(doc => !remoteIds.has(doc.id))];
-            return mergeDocsPreferringLocalProgress(base, local, Number.MAX_SAFE_INTEGER)
-                .filter(doc => doc?.id !== deletedId);
-        }
-
         // 讲义对象的"结构/正文"时间戳：只反映生成、重生成、章节调整等真正改变
         // 内容的操作。阅读进度（progressUpdatedAt）刻意不计入——否则在一台设备上
         // 滚动一下讲义，就会让内容更旧的本地对象整体压过云端较新的章节元数据。
@@ -14947,7 +14825,11 @@
             // 这是 metadata.json 所有发布路径的最后一道门（包括手动全量同步和
             // 云端尚无 metadata 时的课堂首传）。刷新 exercises 快照，确保刚上传
             // 完成的持久标记也进入本次 CAS。
-            let gradingFlush = null;
+            const gradingFlush = await exFlushGradedDrawingCloudCommits();
+            localMetadata = {
+                ...localMetadata,
+                exercises: gradingFlush.exercisesForPublish
+            };
             const frozenClassroom = classroomIntent || stripClassroomData(appData.classroom, false);
             let lastConflict = null;
             for (let attempt = 0; attempt < 5; attempt++) {
@@ -14959,14 +14841,6 @@
                     } catch (e) {
                         throw new Error(i18n('cloud_metadata_corrupt'));
                     }
-                }
-
-                r2AssertAutomaticSyncSafe(remoteMetadata, localMetadata, options);
-                // No payload or backup writes may precede the safety check.
-                if (!gradingFlush) {
-                    gradingFlush = await exFlushGradedDrawingCloudCommits();
-                    localMetadata = { ...localMetadata, exercises: gradingFlush.exercisesForPublish };
-                    r2AssertAutomaticSyncSafe(remoteMetadata, localMetadata, options);
                 }
 
                 const tombstones = mergeClassroomTombstones(
@@ -14999,15 +14873,15 @@
                     );
                     candidateBase = {
                         ...candidateBase,
-                        books: r2DocsForPublication(
+                        books: mergeDocsPreferringLocalProgress(
+                            (appData.books || []).map(book => cleanDocForSync(book)),
                             remoteMetadata?.books || [],
-                            candidateBase.books || [],
-                            options.docDeletedId
+                            Number.MAX_SAFE_INTEGER
                         ),
-                        papers: r2DocsForPublication(
+                        papers: mergeDocsPreferringLocalProgress(
+                            (appData.papers || []).map(paper => cleanDocForSync(paper)),
                             remoteMetadata?.papers || [],
-                            candidateBase.papers || [],
-                            options.docDeletedId
+                            Number.MAX_SAFE_INTEGER
                         )
                     };
                 }
@@ -15654,11 +15528,6 @@
             try {
                 const notebookBundleActions = ['notebook_close', 'notebook_page_add',
                     'notebook_page_update', 'notebook_review_add', 'notebook_review_update'];
-                const documentSyncOptions = {
-                    docUploadId: action === 'upload' ? fileId : null,
-                    docDeletedId: action === 'delete' ? fileId : null
-                };
-                r2AssertAutomaticSyncSafe(await r2ReadSyncMetadata(), appData, documentSyncOptions);
                 if (notebookBundleActions.includes(action)) {
                     if (fileId) await r2SyncNotebookPageBundle(fileId);
                     else if (action === 'notebook_page_add') await r2SyncAllNotebookPages();
@@ -15712,15 +15581,14 @@
                         !(appData.notebooks?.items || []).some(notebook => notebook?.id === fileId);
                     // 删除类任务带着专属发布选项，必须自己提交；其余的完整快照发布可以
                     // 合并到队列中后面的任务，一批变更只同步一次 metadata。
-                    const canDeferPublish = action !== 'delete' && !notebookWasDeleted &&
+                    const canDeferPublish = !notebookWasDeleted &&
                         !CLASSROOM_DELETE_ACTIONS.includes(action) &&
                         r2PendingSyncQueue.some(task => syncActionPublishesFullMetadata(task.action));
                     if (canDeferPublish) {
                         r2DeferredMetadataPublish = true;
                     } else {
                         metadataPublishResult = await r2SyncMetadataOnly({
-                            ...documentSyncOptions,
-                            allowEmpty: action === 'delete' || notebookWasDeleted || ['classroom_delete', 'classroom_note_delete',
+                            allowEmpty: notebookWasDeleted || ['classroom_delete', 'classroom_note_delete',
                                 'recording_delete', 'classroom_folder_delete'].includes(action),
                             classroomOnly: CLASSROOM_DELETE_ACTIONS.includes(action),
                             notebookDeletedId: notebookWasDeleted ? fileId : null
@@ -15858,7 +15726,7 @@
                     'notebook_page_delete', 'notebook_page_reorder', 'notebook_metadata_update',
                     'notebook_review_add', 'notebook_review_update',
                     'exercise_grading_commit'].includes(action);
-                if (err.code !== 'R2_UNCONFIRMED_LOCAL_DATA' && retryableClassroomAction &&
+                if (retryableClassroomAction &&
                     (config.autoSyncEnabled || config.autoSyncOnChange) && Number(attempt || 0) < 8) {
                     const key = action + ':' + fileId;
                     if (!r2ClassroomRetryTimers.has(key)) {
@@ -16599,16 +16467,6 @@
                     syncedAt: new Date().toISOString()
                 };
 
-                // Confirm additions before ANY payload or backup write. Authorization
-                // names exact entries, so a later CAS retry cannot admit unrelated data.
-                const cloudBeforeUpload = await r2ReadSyncMetadata();
-                const confirmedLocalEntries = r2UnconfirmedLocalEntries(cloudBeforeUpload, appData);
-                if (confirmedLocalEntries.length &&
-                    !confirm(i18n('confirm_local_only_cloud_upload', confirmedLocalEntries.length))) {
-                    showToast(i18n('upload_cancelled'));
-                    return;
-                }
-
                 // 防覆盖检查：本地为空而云端有数据时必须用户明确确认
                 let allowEmptyMetadataOverwrite = false;
                 if (!await r2ProtectMetadataOverwrite(metadata)) {
@@ -16651,7 +16509,6 @@
                 metadata.syncedAt = new Date().toISOString();
                 const metadataPublishResult = await r2PublishMetadataWithCas(metadata,
                     stripClassroomData(appData.classroom, false), {
-                        confirmedLocalEntries,
                         allowEmpty: allowEmptyMetadataOverwrite ||
                             (appData.classroomSyncOutbox || []).length > 0
                     });
@@ -17200,7 +17057,6 @@
                     return;
                 }
                 const metadata = JSON.parse(metadataStr);
-                r2AssertAutomaticSyncSafe(metadata);
                 const localR2Config = appData.settings.r2Config;
                 const localApiSettings = pickApiSettingsFrom(appData.settings);
                 const localBooks = appData.books || [];
@@ -17210,12 +17066,27 @@
                 const cloudSyncedAtMs = metadata.syncedAt ? Date.parse(metadata.syncedAt) : 0;
                 let repairMetadataAfterStartup = false;
                 if ((cloudBooks.length + cloudPapers.length) === 0 && (localBooks.length + localPapers.length) > 0) {
-                    console.warn('[startup-sync] 云端书籍索引为空且本地有数据；已保留两端并阻止自动回传');
-                    showToast(i18n('cloud_sync_local_only_blocked', localBooks.length + localPapers.length));
+                    console.warn('[startup-sync] 云端书籍索引为空但本地有 ' + (localBooks.length + localPapers.length) + ' 条，保留本地数据并回传云端');
+                    try {
+                        await r2SyncMetadataOnly();
+                        showToast(i18n('cloud_index_repaired'));
+                    } catch (e) { console.warn('[startup-sync] 回传修复失败:', e); }
                     finishR2StartupMetadataSync();
                     return;
                 }
-                // Keep PDF bytes; automatic restore must never delete local files.
+                const cloudIds = new Set([...cloudBooks, ...cloudPapers].map(d => d && d.id).filter(Boolean));
+                const removedIds = [...localBooks, ...localPapers]
+                    .filter(d => {
+                        if (!d || !d.id) return false;
+                        if (cloudIds.has(d.id)) return false;
+                        const addedAtMs = d.addedAt ? Date.parse(d.addedAt) : NaN;
+                        if (!isNaN(addedAtMs) && addedAtMs > cloudSyncedAtMs) return false;
+                        return true;
+                    })
+                    .map(d => d.id);
+                for (const id of removedIds) {
+                    try { await deleteFileData(id); } catch (e) { console.warn('deleteFileData failed for', id, e); }
+                }
                 appData.books = mergeDocsPreferringLocalProgress(cloudBooks, localBooks, cloudSyncedAtMs);
                 appData.papers = mergeDocsPreferringLocalProgress(cloudPapers, localPapers, cloudSyncedAtMs);
                 appData.notes = mergePreferNonEmpty(metadata.notes, appData.notes);
