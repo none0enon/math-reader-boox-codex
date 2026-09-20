@@ -1,6 +1,6 @@
 # Math Reader Codex (experimental)
 
-这是独立的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。当前新仓库为私有，尚未启用 Pages 或配置正式 APK 签名凭据。请在本仓库提交 Issue 和后续修改。
+这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。尚未启用 Pages 或配置正式 APK 签名凭据。请在本仓库提交 Issue 和后续修改。
 
 This is an independent experimental repository for the personal ChatGPT-authenticated Codex gateway. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
 

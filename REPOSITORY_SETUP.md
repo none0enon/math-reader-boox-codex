@@ -6,7 +6,7 @@ The code is derived from the stable `none0enon/math-reader-boox` repository at `
 
 ## Current boundaries
 
-- The repository is initially private. No GitHub Pages site is enabled here.
+- The repository is public, as requested by the owner. No GitHub Pages site is enabled here.
 - Automated gateway/frontend tests and the unsigned APK build remain available.
 - `APK_VERSION_CODE_BASE` is a non-secret repository variable. The initial value is `120000`; it is not evidence that a new APK may safely replace an installed stable APK.
 - Official signing is skipped until this repository has its own `APK_SIGNING_CERT_SHA256` variable and the required signing environment/secrets. No keystore, password, ChatGPT login, Gemini key, R2 credentials, or gateway token is copied to GitHub.
