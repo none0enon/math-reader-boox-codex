@@ -1,10 +1,12 @@
 # Math Reader Codex (experimental)
 
-这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。尚未启用 Pages 或配置正式 APK 签名凭据。请在本仓库提交 Issue 和后续修改。
+这是独立、公开的 Codex 实验仓库，基于 [Math Reader 稳定版](https://github.com/none0enon/math-reader-boox) 的 `15a156b` 保留历史并开发；稳定仓库不接收这里的实验改动。PWA 使用本仓库自己的 GitHub Pages 部署，正式 APK 签名仍未配置。请在本仓库提交 Issue 和后续修改。
+
+**网页版：** https://none0enon.github.io/math-reader-boox-codex/ 。首次打开是独立的空数据空间，不会自动导入稳定版资料；请自行备份后按需导入。Codex AI 需要连接你自己的私有网关，网页中没有内置账号、令牌或公开推理服务。
 
 This is an independent experimental repository for the personal ChatGPT-authenticated Codex gateway. It preserves the stable project's history without publishing changes back to the stable repository. See [migration and release setup](REPOSITORY_SETUP.md).
 
-**安装提醒：** 目前继承的 Android 包名仍为 `com.mathreader.boox`，尚未分离为可与稳定版并存的应用；不要为安装实验版卸载稳定版。之前从旧仓库生成的签名测试 APK 也不是独立安装版。新的发布与 PWA 存储隔离需先完成配置和验证。
+**安装提醒：** 目前继承的 Android 包名仍为 `com.mathreader.boox`，尚未分离为可与稳定版并存的应用；不要为安装实验版卸载稳定版。之前从旧仓库生成的签名测试 APK 也不是独立安装版。建议先使用独立网页版；PWA 的业务存储已采用实验版专用前缀，浏览器回归已验证不改变稳定版数据。相同域名仍共享浏览器安全源，这种命名隔离不是抵御恶意同源脚本的安全边界。
 
 Math Reader 是一个面向数学学习的本地优先工作台：把资料阅读、课堂记录、AI 讲义、手写笔记、间隔复习和习题训练放在同一个应用中。
 
@@ -35,7 +37,7 @@ This repository ships the current Math Reader web app as an Android APK. BOOX/E 
 1. 安装项目发布的正式签名 APK。Android 需要允许浏览器或文件管理器“安装未知应用”；最低支持 Android 8.0（API 26）。
 2. 第一次安装默认显示 English，可在 **Settings → Language Settings → Interface Language → 中文** 切换。
 3. 后续更新直接覆盖安装正式签名 APK，不要先卸载；覆盖安装会保留应用私有目录中的数据，卸载则会清除本地文档、笔记和录音。
-4. 如果旧测试版使用了不同签名，先在旧版执行 **设置 → 数据管理 → 导出数据**，确认 ZIP 已保存，再卸载并安装正式版。
+4. 如果遇到不同签名或版本冲突，不要卸载稳定版来安装实验版。请先使用本仓库的独立网页；APK 并存身份与签名尚待单独配置。
 5. 首次使用建议先进入 **设置 → 存储持久化** 请求授权，再完成 AI 和备份设置。
 
 底部导航从左到右依次是：**课堂、书架、阅读、讲义、笔记、习题、设置**。应用会保存最近打开的文档、页码、笔记页和部分作答进度。

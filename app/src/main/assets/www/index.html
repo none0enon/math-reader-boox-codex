@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title data-i18n="app_title">数学阅读</title>
+    <title data-i18n="app_title">数学阅读 · Codex 实验版</title>
     <!-- PWA 支持 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="数学阅读" data-i18n="app_title" data-i18n-attr="content">
+    <meta name="apple-mobile-web-app-title" content="数学阅读 · Codex 实验版" data-i18n="app_title" data-i18n-attr="content">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icon-infinity-white.svg">
     <!-- PDF.js -->
@@ -4908,12 +4908,33 @@
             border: 1px solid var(--border-color);
         }
 
+        .codex-experiment-badge {
+            position: fixed;
+            top: max(6px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4000;
+            padding: 4px 10px;
+            border: 2px solid #111;
+            border-radius: 999px;
+            background: #fff;
+            color: #111;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+        }
+
         /* 墨水屏友好：编辑器内减少动画 */
         .nb-editor * { transition: none !important; }
 
     </style>
 </head>
 <body>
+    <div class="codex-experiment-badge" role="status" aria-label="Codex 独立实验版">Codex 独立实验版</div>
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
@@ -6531,6 +6552,7 @@
         </div>
     </div>
 
+    <script src="storage-namespace.js"></script>
     <script src="recording-storage.js"></script>
     <script src="classroom-storage.js"></script>
     <script src="recording-ai.js"></script>
@@ -7152,7 +7174,7 @@
         };
         Object.assign(I18N.zh, {
             ai_personal_greeting:'你好，{0}！{1}',
-            app_title:'数学阅读', notification_enabled_body:'通知已开启',
+            app_title:'数学阅读 · Codex 实验版', notification_enabled_body:'通知已开启',
             file_write_verify_failed:'文件写入校验失败', archived_label:'已归档', unsupported_online_format:'暂不支持在线阅读 {0} 格式', pdf_render_hint:'请转换为 PDF 后阅读', pdf_load_failed:'PDF 加载失败', pdf_load_failed_detail:'PDF 加载失败：', html2canvas_load_failed:'截图组件加载失败',
             generating:'生成中…', section_progress:'{0}/{1} 节', planning_lecture_chapters:'正在规划讲义章节…', failed:'失败',
             edit_message_prompt:'编辑消息：', reader_chat_greeting:'正在阅读《{0}》。{1}', reader_chat_notes:'\n当前页笔记：{0}', reader_fallback_review:'请帮我复习这一页的重点。', reader_fallback_example:'请给一个相关例题。', reader_fallback_notes:'请整理当前内容的学习笔记。', reader_fallback_proof:'请详细解释相关证明。', request_failed:'请求失败：', unknown_error:'未知错误',
@@ -7171,7 +7193,7 @@
         });
         Object.assign(I18N.en, {
             ai_personal_greeting:'Hi, {0}! {1}',
-            app_title:'Math Reader', notification_enabled_body:'Notifications are enabled',
+            app_title:'Math Reader · Codex Experiment', notification_enabled_body:'Notifications are enabled',
             file_write_verify_failed:'File write verification failed', archived_label:'Archived', unsupported_online_format:'Online reading is not supported for {0} files', pdf_render_hint:'Convert the file to PDF to read it here', pdf_load_failed:'Failed to load PDF', pdf_load_failed_detail:'Failed to load PDF: ', html2canvas_load_failed:'Failed to load the screenshot component',
             generating:'Generating…', section_progress:'{0}/{1} sections', planning_lecture_chapters:'Planning lecture sections…', failed:'Failed',
             edit_message_prompt:'Edit message:', reader_chat_greeting:'You are reading “{0}.”{1}', reader_chat_notes:'\nNotes on this page: {0}', reader_fallback_review:'Help me review the key points on this page.', reader_fallback_example:'Give me a related example problem.', reader_fallback_notes:'Turn the current content into study notes.', reader_fallback_proof:'Explain the relevant proof in detail.', request_failed:'Request failed: ', unknown_error:'Unknown error',
@@ -7190,7 +7212,7 @@
         });
         Object.assign(I18N.fr, {
             ai_personal_greeting:'Bonjour, {0} ! {1}',
-            app_title:'Lecteur de mathématiques', notification_enabled_body:'Les notifications sont activées',
+            app_title:'Lecteur de mathématiques · Expérience Codex', notification_enabled_body:'Les notifications sont activées',
             file_write_verify_failed:"Échec de la vérification d’écriture du fichier", archived_label:'Archivé', unsupported_online_format:'La lecture en ligne des fichiers {0} n’est pas prise en charge', pdf_render_hint:'Convertissez le fichier en PDF pour le lire ici', pdf_load_failed:'Échec du chargement du PDF', pdf_load_failed_detail:'Échec du chargement du PDF : ', html2canvas_load_failed:'Échec du chargement du composant de capture',
             generating:'Génération…', section_progress:'{0}/{1} sections', planning_lecture_chapters:'Planification des sections du cours…', failed:'Échec',
             edit_message_prompt:'Modifier le message :', reader_chat_greeting:'Vous lisez « {0} ».{1}', reader_chat_notes:'\nNotes de cette page : {0}', reader_fallback_review:'Aide-moi à réviser les points clés de cette page.', reader_fallback_example:'Donne-moi un exercice similaire.', reader_fallback_notes:'Transforme le contenu actuel en notes de révision.', reader_fallback_proof:'Explique en détail la démonstration correspondante.', request_failed:'Échec de la requête : ', unknown_error:'Erreur inconnue',
@@ -7356,7 +7378,7 @@
         }
         function setLanguage(lang) {
             currentLang = lang;
-            localStorage.setItem('mathreader_lang', lang);
+            mrLocalStorage.setItem('mathreader_lang', lang);
             applyI18n();
             const aiNameInput = document.getElementById('aiName');
             if (aiNameInput && !appData.settings?.aiName) aiNameInput.value = i18n('ai_assistant');
@@ -7386,7 +7408,7 @@
             if (ls) ls.value = currentLang;
             updateReaderModeToggleLabel();
         }
-        (function(){ const s = localStorage.getItem('mathreader_lang'); if (s && I18N[s]) currentLang = s; })();
+        (function(){ const s = mrLocalStorage.getItem('mathreader_lang'); if (s && I18N[s]) currentLang = s; })();
 
         let currentUploadType = 'book';
         let currentDoc = null;
@@ -7595,7 +7617,7 @@
         function initFileDB() {
             return new Promise((resolve, reject) => {
                 try {
-                    const request = indexedDB.open('mathReaderFiles', 1);
+                    const request = indexedDB.open(indexedDbName('mathReaderFiles'), 1);
                     request.onerror = () => { fileDBReady = false; reject(request.error); };
                     request.onsuccess = () => {
                         fileDB = request.result;
@@ -7842,7 +7864,7 @@
             }
             if (migrated) {
                 saveData();
-                console.log('[migrate] 讲义内容已从 localStorage 迁移到 IndexedDB');
+                console.log('[migrate] 讲义内容已从 mrLocalStorage 迁移到 IndexedDB');
             }
         }
 
@@ -8227,7 +8249,7 @@
             }
             if (migrated) {
                 saveData();
-                console.log('[migrate] 论文摘要已从 localStorage 迁移到 IndexedDB');
+                console.log('[migrate] 论文摘要已从 mrLocalStorage 迁移到 IndexedDB');
             }
         }
 
@@ -8340,7 +8362,7 @@
             if (migrated) {
                 // saveData 中会自动剔除这些大数据后再写 localStorage
                 saveData();
-                console.log('[migrate] 标注/草稿画布/截图已从 localStorage 迁移到 IndexedDB');
+                console.log('[migrate] 标注/草稿画布/截图已从 mrLocalStorage 迁移到 IndexedDB');
             }
         }
 
@@ -8448,7 +8470,7 @@
         let appDataLoaded = false;
 
         async function loadData() {
-            const saved = localStorage.getItem('mathReader');
+            const saved = mrLocalStorage.getItem('mathReader');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -8499,18 +8521,18 @@
             }
             // 迁移：如果 localStorage 中的 appData 还残留 exercises 数据
             try {
-                const raw = localStorage.getItem('mathReader');
+                const raw = mrLocalStorage.getItem('mathReader');
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (parsed.exercises && (parsed.exercises.folders?.length || Object.keys(parsed.exercises.wrongByFolder || {}).length)) {
                         // localStorage 中有习题数据，迁移到 IDB
                         if (!appData.exercises || !appData.exercises.folders?.length) {
                             appData.exercises = parsed.exercises;
-                            console.log('[migrate] 习题数据从 localStorage 迁移到 IndexedDB');
+                            console.log('[migrate] 习题数据从 mrLocalStorage 迁移到 IndexedDB');
                         }
                         // 从 localStorage 中删掉 exercises 字段并写回
                         delete parsed.exercises;
-                        try { localStorage.setItem('mathReader', JSON.stringify(parsed)); } catch(e2) {}
+                        try { mrLocalStorage.setItem('mathReader', JSON.stringify(parsed)); } catch(e2) {}
                         // 保存到 IDB
                         await saveFileData('__exercises_data__', JSON.stringify(appData.exercises));
                     }
@@ -8555,7 +8577,7 @@
                     if (!appData.notebooks.items) appData.notebooks.items = [];
                     if (!appData.notebooks.reviews) appData.notebooks.reviews = [];
                     // 写回 localStorage（不含 exercises）
-                    try { localStorage.setItem('mathReader', JSON.stringify(appData)); } catch(e2) {}
+                    try { mrLocalStorage.setItem('mathReader', JSON.stringify(appData)); } catch(e2) {}
                     appDataLoaded = true;
                     console.log('[loadData] 已从 IndexedDB 备份恢复数据 (' + best.key + ')');
                     showToast(i18n('toast_data_restored_backup'));
@@ -8641,10 +8663,10 @@
             if (curCounts.total > 0) {
                 const day = new Date().toISOString().slice(0, 10);
                 let lastDay = null;
-                try { lastDay = localStorage.getItem('mrDailyBackupDay'); } catch (e) {}
+                try { lastDay = mrLocalStorage.getItem('mrDailyBackupDay'); } catch (e) {}
                 if (lastDay !== day) {
                     saveFileData('__appdata_backup_d' + new Date().getDay() + '__', backupJson)
-                        .then(() => { try { localStorage.setItem('mrDailyBackupDay', day); } catch (e) {} })
+                        .then(() => { try { mrLocalStorage.setItem('mrDailyBackupDay', day); } catch (e) {} })
                         .catch(e => console.warn('[backup] 每日滚动备份失败:', e));
                 }
             }
@@ -8738,10 +8760,10 @@
             }
             let metadataSaved = true;
             try {
-                localStorage.setItem('mathReader', JSON.stringify(toSave));
+                mrLocalStorage.setItem('mathReader', JSON.stringify(toSave));
             } catch (e) {
                 metadataSaved = false;
-                console.error('[saveData] localStorage 写入失败:', e);
+                console.error('[saveData] mrLocalStorage 写入失败:', e);
                 showToast(i18n('toast_storage_full'));
             }
             // 异步保存标注大数据、草稿画布、截图到 IndexedDB
@@ -11235,16 +11257,16 @@
 
         function getEinkDocZoom(docId) {
             try {
-                const data = JSON.parse(localStorage.getItem('einkDocZoom') || '{}');
+                const data = JSON.parse(mrLocalStorage.getItem('einkDocZoom') || '{}');
                 return data[docId] || 1;
             } catch(e) { return 1; }
         }
 
         function setEinkDocZoom(docId, zoom) {
             try {
-                const data = JSON.parse(localStorage.getItem('einkDocZoom') || '{}');
+                const data = JSON.parse(mrLocalStorage.getItem('einkDocZoom') || '{}');
                 data[docId] = Math.round(zoom * 100) / 100;
-                localStorage.setItem('einkDocZoom', JSON.stringify(data));
+                mrLocalStorage.setItem('einkDocZoom', JSON.stringify(data));
             } catch(e) {}
         }
 
@@ -12452,14 +12474,14 @@
 
             // 习题时间（仅本地存储，不参与云同步）
             try {
-                const etVal = parseInt(localStorage.getItem('exerciseTimeMinutes'));
+                const etVal = parseInt(mrLocalStorage.getItem('exerciseTimeMinutes'));
                 const etEl = document.getElementById('exerciseTimeMinutes');
                 if (etEl) etEl.value = (etVal >= 1 && etVal <= 120) ? etVal : 20;
             } catch(e) {}
 
             // Apple Pencil 模式（仅本地存储，不参与云同步）
             try {
-                applePencilMode = localStorage.getItem('applePencilMode') === 'true';
+                applePencilMode = mrLocalStorage.getItem('applePencilMode') === 'true';
             } catch(e) { applePencilMode = false; }
             const apToggle = document.getElementById('applePencilToggle');
             if (apToggle) apToggle.classList.toggle('on', applePencilMode);
@@ -12467,7 +12489,7 @@
 
             // 墨水屏模式（仅本地存储，不参与云同步）
             try {
-                einkMode = localStorage.getItem('einkMode') === 'true';
+                einkMode = mrLocalStorage.getItem('einkMode') === 'true';
             } catch(e) { einkMode = false; }
             const einkToggle = document.getElementById('einkModeToggle');
             if (einkToggle) einkToggle.classList.toggle('on', einkMode);
@@ -12477,7 +12499,7 @@
 
             // 优化书写延迟（仅本地存储，不参与云同步）
             try {
-                optimizeWritingLatency = localStorage.getItem('optimizeWritingLatency') === 'true';
+                optimizeWritingLatency = mrLocalStorage.getItem('optimizeWritingLatency') === 'true';
             } catch(e) { optimizeWritingLatency = false; }
             const wlToggle = document.getElementById('writingLatencyToggle');
             if (wlToggle) wlToggle.classList.toggle('on', optimizeWritingLatency);
@@ -13114,7 +13136,7 @@
             document.body.classList.toggle('apple-pencil-mode', applePencilMode);
             // 仅存储在 localStorage，不参与云同步
             try {
-                localStorage.setItem('applePencilMode', applePencilMode ? 'true' : 'false');
+                mrLocalStorage.setItem('applePencilMode', applePencilMode ? 'true' : 'false');
             } catch(e) {}
             showToast(applePencilMode ? i18n('toast_pencil_on') : i18n('toast_pencil_off'));
         }
@@ -13126,7 +13148,7 @@
             if (toggle) toggle.classList.toggle('on', einkMode);
             document.body.classList.toggle('eink-mode', einkMode);
             try {
-                localStorage.setItem('einkMode', einkMode ? 'true' : 'false');
+                mrLocalStorage.setItem('einkMode', einkMode ? 'true' : 'false');
             } catch(e) {}
             if (!einkMode && totalPages > 0) {
                 einkExitReaderMode();
@@ -13149,7 +13171,7 @@
             if (toggle) toggle.classList.toggle('on', optimizeWritingLatency);
             // 仅存储在 localStorage，不参与云同步
             try {
-                localStorage.setItem('optimizeWritingLatency', optimizeWritingLatency ? 'true' : 'false');
+                mrLocalStorage.setItem('optimizeWritingLatency', optimizeWritingLatency ? 'true' : 'false');
             } catch(e) {}
             // 习题书写画布若已打开，先保存笔迹再按新模式重建，开关即时生效
             if (exDoingState && exDoingState.questions && exCanvasCtx) {
@@ -18672,12 +18694,12 @@
         let _chatScrollSaveTimer = null;
         function saveReaderChatScroll(docId, scrollTop) {
             if (!docId) return;
-            try { localStorage.setItem('mathreader_chat_scroll_' + docId, String(Math.max(0, Math.round(scrollTop)))); } catch (e) {}
+            try { mrLocalStorage.setItem('mathreader_chat_scroll_' + docId, String(Math.max(0, Math.round(scrollTop)))); } catch (e) {}
         }
         function loadReaderChatScroll(docId) {
             if (!docId) return null;
             try {
-                const v = localStorage.getItem('mathreader_chat_scroll_' + docId);
+                const v = mrLocalStorage.getItem('mathreader_chat_scroll_' + docId);
                 return v === null ? null : parseInt(v, 10);
             } catch (e) { return null; }
         }
@@ -19179,7 +19201,7 @@
             size = Math.max(12, Math.min(24, parseInt(size, 10) || 14));
             document.getElementById('readerChatContainer').style.setProperty('--reader-chat-font-size', size + 'px');
             document.getElementById('readerChatFontsize').value = String(size);
-            try { localStorage.setItem('mathreader_chat_fontsize', String(size)); } catch (e) {}
+            try { mrLocalStorage.setItem('mathreader_chat_fontsize', String(size)); } catch (e) {}
         }
 
         async function openReaderChat(doc = currentDoc) {
@@ -19193,7 +19215,7 @@
             clearChatQuote();
             document.getElementById('readerChatTitle').textContent = 'AI - ' + currentDoc.title;
             let fontSize = document.getElementById('readerChatFontsize').value;
-            try { fontSize = localStorage.getItem('mathreader_chat_fontsize') || fontSize; } catch (e) {}
+            try { fontSize = mrLocalStorage.getItem('mathreader_chat_fontsize') || fontSize; } catch (e) {}
             setReaderChatFontsize(fontSize);
 
             let history = loadReaderChatHistory(currentDoc.id, currentDoc.question);
@@ -20990,7 +21012,7 @@ ${i18n('prompt_lecture_gen')}`;
             lecturePenEraser = false;
             document.getElementById('lecturePenEraser').classList.remove('active');
             // 仅本地记忆，不云同步
-            try { localStorage.setItem('lecturePenColor', lecturePenColor); } catch(e) {}
+            try { mrLocalStorage.setItem('lecturePenColor', lecturePenColor); } catch(e) {}
             applyLectureInputMode();
         }
 
@@ -20999,15 +21021,15 @@ ${i18n('prompt_lecture_gen')}`;
             el.classList.add('active');
             lecturePenSize = parseInt(el.dataset.size);
             // 仅本地记忆，不云同步
-            try { localStorage.setItem('lecturePenSize', String(lecturePenSize)); } catch(e) {}
+            try { mrLocalStorage.setItem('lecturePenSize', String(lecturePenSize)); } catch(e) {}
             applyLectureInputMode();
         }
 
         // 恢复本地记忆的画笔偏好
         function restoreLecturePenPrefs() {
             try {
-                const savedColor = localStorage.getItem('lecturePenColor');
-                const savedSize = localStorage.getItem('lecturePenSize');
+                const savedColor = mrLocalStorage.getItem('lecturePenColor');
+                const savedSize = mrLocalStorage.getItem('lecturePenSize');
                 if (savedColor) {
                     lecturePenColor = savedColor;
                     document.querySelectorAll('.lecture-pen-color').forEach(c => {
@@ -25403,13 +25425,13 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
             let val = parseInt(document.getElementById('exerciseTimeMinutes').value) || 20;
             val = Math.max(1, Math.min(120, val));
             document.getElementById('exerciseTimeMinutes').value = val;
-            try { localStorage.setItem('exerciseTimeMinutes', val); } catch(e) {}
+            try { mrLocalStorage.setItem('exerciseTimeMinutes', val); } catch(e) {}
             showToast(i18n('toast_saved'));
         }
 
         function getExerciseTimeSeconds() {
             try {
-                const val = parseInt(localStorage.getItem('exerciseTimeMinutes'));
+                const val = parseInt(mrLocalStorage.getItem('exerciseTimeMinutes'));
                 if (val >= 1 && val <= 120) return val * 60;
             } catch(e) {}
             return 1200;
@@ -28487,11 +28509,11 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
             const prefix = exLocalPositionKey('');
             const keys = [];
             try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
+                for (let i = 0; i < mrLocalStorage.length; i++) {
+                    const key = mrLocalStorage.key(i);
                     if (key && key.startsWith(prefix)) keys.push(key);
                 }
-                keys.forEach(key => localStorage.removeItem(key));
+                keys.forEach(key => mrLocalStorage.removeItem(key));
             } catch (e) {
                 console.warn('[exercise] 清理最后打开题记录失败:', e);
             }
@@ -28522,7 +28544,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
 
         function exReadLocalPosition(taskId) {
             try {
-                return JSON.parse(localStorage.getItem(exLocalPositionKey(taskId)) || 'null');
+                return JSON.parse(mrLocalStorage.getItem(exLocalPositionKey(taskId)) || 'null');
             } catch (e) {
                 return null;
             }
@@ -28546,7 +28568,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
             task.lastOpenedQuestionIndex = position.lastOpenedQuestionIndex;
             task.lastOpenedQuestionUpdatedAt = exPositionTimestamp(position);
             try {
-                localStorage.setItem(exLocalPositionKey(task.id), JSON.stringify({
+                mrLocalStorage.setItem(exLocalPositionKey(task.id), JSON.stringify({
                     taskId: task.id,
                     lastOpenedQuestionIndex: task.lastOpenedQuestionIndex,
                     lastOpenedQuestionUpdatedAt: task.lastOpenedQuestionUpdatedAt
@@ -28728,7 +28750,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
                 delete task.lastOpenedQuestionIndex;
                 delete task.lastOpenedQuestionUpdatedAt;
             }
-            try { localStorage.removeItem(exLocalPositionKey(taskId)); } catch (e) {}
+            try { mrLocalStorage.removeItem(exLocalPositionKey(taskId)); } catch (e) {}
             delete _exPendingPositionChoices[taskId];
             if (_exPositionSyncTarget && _exPositionSyncTarget.taskId === taskId) {
                 clearTimeout(_exPositionSyncTimer);
@@ -31478,7 +31500,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
         function nbPersistOpenedPage(nb) {
             if (!nb || !nb.id || !nb.lastOpenedPageId) return;
             try {
-                localStorage.setItem(nbLocalPositionKey(nb.id), JSON.stringify({
+                mrLocalStorage.setItem(nbLocalPositionKey(nb.id), JSON.stringify({
                     lastOpenedPageId: nb.lastOpenedPageId,
                     lastOpenedPageUpdatedAt: nb.lastOpenedPageUpdatedAt
                 }));
@@ -31487,7 +31509,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
         function nbRestoreLocalPosition(nb) {
             if (!nb || !nb.id) return false;
             try {
-                const position = JSON.parse(localStorage.getItem(nbLocalPositionKey(nb.id)) || 'null');
+                const position = JSON.parse(mrLocalStorage.getItem(nbLocalPositionKey(nb.id)) || 'null');
                 const positionTs = Number(position && position.lastOpenedPageUpdatedAt) || 0;
                 const currentTs = Number(nb.lastOpenedPageUpdatedAt) || 0;
                 const pageExists = position && (nb.pages || []).some(page =>
@@ -31721,7 +31743,7 @@ ${paper.abstract ? i18n('prompt_abstract_original') + paper.abstract : ''}`;
             appData.notebooks.items = d.items;
             // 该笔记本的复习计划一并移除
             appData.notebooks.reviews = d.reviews.filter(r => r.notebookId !== nbId);
-            try { localStorage.removeItem(nbLocalPositionKey(nbId)); } catch (e) {}
+            try { mrLocalStorage.removeItem(nbLocalPositionKey(nbId)); } catch (e) {}
             saveData();
             nbSyncNotebookEvent('notebook_metadata_update', nbId);
             renderNotebooksPage();

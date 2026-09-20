@@ -167,6 +167,13 @@ export function createGatewayHandler({ config, engine, token }) {
         if (!['/v1/ask', '/v1/models', '/v1/status'].includes(url.pathname)) {
           throw new GatewayError('not_found', 'Endpoint not found.', 404);
         }
+        // Compatibility with browsers using PNA preflights. Modern browsers
+        // may additionally require the user's local-network permission.
+        // applyCors already validated the origin; actual requests still need
+        // the gateway bearer token. Never grant this to origin-less probes.
+        if (request.headers.origin && request.headers['access-control-request-private-network'] === 'true') {
+          response.setHeader('Access-Control-Allow-Private-Network', 'true');
+        }
         response.writeHead(204, { 'Cache-Control': 'no-store' });
         response.end();
         return;

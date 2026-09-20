@@ -43,4 +43,5 @@ jobs:
         run: |
           cmp app/src/main/assets/www/index.html docs/index.html
           cmp app/src/main/assets/www/codex-gateway.js docs/codex-gateway.js
+          cmp app/src/main/assets/www/storage-namespace.js docs/storage-namespace.js
           cmp app/src/main/assets/www/sw.js docs/sw.js

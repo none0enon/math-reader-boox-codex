@@ -81,6 +81,24 @@ test('HTTP contract enforces bearer auth, CORS, methods, body type, and size', a
       });
       assert.equal(response.status, 204);
       assert.equal(response.headers.get('access-control-allow-origin'), 'https://allowed.example');
+      assert.equal(response.headers.get('access-control-allow-private-network'), null);
+
+      for (const origin of ['https://allowed.example', 'https://evil.example', null]) {
+        response = await fetch(`${base}/v1/ask`, {
+          method: 'OPTIONS',
+          headers: {
+            ...(origin ? { Origin: origin } : {}),
+            'Access-Control-Request-Private-Network': 'true',
+          },
+        });
+        assert.equal(response.status, origin === 'https://evil.example' ? 403 : 204);
+        assert.equal(response.headers.get('access-control-allow-private-network'),
+          origin === 'https://allowed.example' ? 'true' : null);
+      }
+      response = await fetch(`${base}/v1/status`, {
+        headers: { Origin: 'https://allowed.example' },
+      });
+      assert.equal(response.status, 401, 'network preflight never replaces bearer authentication');
 
       response = await fetch(`${base}/v1/ask`, {
         method: 'POST',

@@ -60,6 +60,23 @@ First verify the gateway on its own host using the loopback address. For your BO
 
 The app's gateway URL must be the base address, such as `https://math-reader.your-private-domain.example`, without `/v1/ask`. Allow the exact browser origins that will call it. The Android application's origin is `https://appassets.androidplatform.net`; the current GitHub Pages origin is `https://none0enon.github.io`. A PWA hosted on another domain needs that origin added to the gateway configuration.
 
+### Mac + Tailscale private HTTPS
+
+1. Install the [official standalone Tailscale app](https://tailscale.com/docs/install/mac) on the Mac, approve its system extension/VPN prompts, and sign in. Install Tailscale on the BOOX and sign into the same private network.
+2. Keep the gateway on its default `127.0.0.1:4747` address. Do not enable remote insecure binding.
+3. In the Mac terminal, run the following using the standalone app's CLI:
+
+   ```sh
+   /Applications/Tailscale.app/Contents/MacOS/Tailscale serve --bg http://127.0.0.1:4747
+   /Applications/Tailscale.app/Contents/MacOS/Tailscale serve status
+   ```
+
+4. If Tailscale asks to enable HTTPS, follow its official confirmation link. Enter the resulting `https://…ts.net` base URL in the app, together with the separate gateway token. Keep that token out of GitHub, URLs and screenshots.
+5. Use **Serve**, not **Funnel**: Serve is reachable within the private network; Funnel publishes a service to the Internet. Do not configure an exit node, subnet routes, or public port forwarding for this gateway.
+6. If the browser asks for local-network access, allow it for the experimental site. The gateway supports allowlisted PNA preflights for older browsers, but that does not replace modern browser permission prompts or bearer authentication.
+
+The Mac must remain awake, Tailscale connected, and the gateway process running. `serve --bg` does not start Node or prevent Mac sleep. Test **Test connection** from the actual BOOX; a successful request on the Mac does not establish BOOX connectivity. See [Tailscale Serve](https://tailscale.com/docs/features/tailscale-serve) and [Chrome local-network permissions](https://developer.chrome.com/blog/local-network-access).
+
 ## Configure Math Reader
 
 1. Open **Settings → API Setting**.
@@ -85,6 +102,8 @@ This is a single-user integration for your own trusted devices, not a public mul
 The gateway disables known Codex tool features, explicitly disables `tools.experimental_request_user_input`, refuses client tool/approval requests, interrupts observed tool activity, and never forwards arbitrary HTTP input as app-server RPC methods. In a local fake-provider capture, the pinned official CLI sent an empty `tools` array and no injected `additional_tools` input. The desktop-bundled build tested separately did inject host tool descriptions; this is why the independent runtime is pinned. This observation is not an OS sandbox guarantee or a guarantee about future CLI/model changes. Do not run the service with access to unrelated private files or production secrets. Keep the raw app-server on private local stdio only.
 
 Account allowance, device-code login availability, and supported model options depend on the user's ChatGPT account. The automated tests use local fakes; they do not establish subscription access, real model quality, remote HTTPS reachability, or BOOX compatibility. Those require the real-device acceptance checks above.
+
+On 2026-09-20, the independent gateway was also validated on a Mac using a real ChatGPT login (no OpenAI API key): text mathematics, a triangle image, a PDF-based lecture, and JSON grading all returned correct sample answers with `gpt-6-astra`. These small acceptance samples are not a general accuracy guarantee; BOOX networking and real Gemini audio remain separate checks.
 
 ## HTTP interface
 

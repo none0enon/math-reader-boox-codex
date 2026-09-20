@@ -1,7 +1,7 @@
 {
-  "name": "数学阅读",
-  "short_name": "数学阅读",
-  "description": "专注数学阅读与笔记",
+  "name": "数学阅读 · Codex 实验版",
+  "short_name": "Math Reader Codex",
+  "description": "使用个人 Codex Gateway 的独立实验版数学阅读与笔记应用",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
