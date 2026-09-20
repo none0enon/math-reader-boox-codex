@@ -138,14 +138,14 @@ test('application source loads the namespace first and has no direct stable stor
     assert.match(index, /indexedDB\.open\(indexedDbName\(['"]mathReaderFiles['"]\),\s*1\)/);
 });
 
-test('Codex experiment branding is visible in HTML and install metadata', async () => {
+test('independent install metadata adds no experiment badge to the page', async () => {
     const [index, manifestText] = await Promise.all([
         readFile(appUrl('index.html'), 'utf8'),
         readFile(appUrl('manifest.json'), 'utf8')
     ]);
     const manifest = JSON.parse(manifestText);
 
-    assert.match(index, /Codex 独立实验版/);
+    assert.doesNotMatch(index, /codex-experiment-badge|Codex 独立实验版/);
     assert.match(index, /Math Reader · Codex Experiment/);
     assert.match(manifest.name, /Codex 实验版/);
     assert.match(manifest.short_name, /Codex/);

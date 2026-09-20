@@ -4908,33 +4908,12 @@
             border: 1px solid var(--border-color);
         }
 
-        .codex-experiment-badge {
-            position: fixed;
-            top: max(6px, env(safe-area-inset-top));
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 4000;
-            padding: 4px 10px;
-            border: 2px solid #111;
-            border-radius: 999px;
-            background: #fff;
-            color: #111;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.04em;
-            line-height: 1.2;
-            white-space: nowrap;
-            pointer-events: none;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-        }
-
         /* 墨水屏友好：编辑器内减少动画 */
         .nb-editor * { transition: none !important; }
 
     </style>
 </head>
 <body>
-    <div class="codex-experiment-badge" role="status" aria-label="Codex 独立实验版">Codex 独立实验版</div>
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
